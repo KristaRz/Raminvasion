@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    [SerializeField] private float speed = 5;
-    [SerializeField] private float jumpHeight = 15;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float jumpHeight = 15f;
     [SerializeField] private PhysicalCC physicalCC;
 
     [SerializeField] private Transform _CameraFollow;
@@ -14,7 +14,7 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
 	{
-		if (physicalCC.isGround)
+        if (physicalCC.isGround)
 		{
 			physicalCC.moveInput = Vector3.ClampMagnitude(transform.forward
 							* Input.GetAxis("Vertical")
