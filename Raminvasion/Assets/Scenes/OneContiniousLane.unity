@@ -459,6 +459,7 @@ GameObject:
   - component: {fileID: 1721650748}
   - component: {fileID: 1721650747}
   - component: {fileID: 1721650746}
+  - component: {fileID: 1721650750}
   m_Layer: 0
   m_Name: col
   m_TagString: Untagged
@@ -537,13 +538,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1721650745}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.23, y: 0, z: -15.64}
+  m_LocalPosition: {x: 3.23, y: 1, z: -15.64}
   m_LocalScale: {x: 15, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1721650750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721650745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e94f45202e2cd40b1d4f6071144d77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1932808098
 GameObject:
   m_ObjectHideFlags: 0
