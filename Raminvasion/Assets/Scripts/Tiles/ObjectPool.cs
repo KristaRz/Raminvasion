@@ -1,3 +1,5 @@
+// Created 15.05.2023 by Krista Plagemann //
+// Object pool for tiles etc. Sets object active or inactive //
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,7 +38,7 @@ public class ObjectPool : MonoBehaviour
     {
         foreach(GameObject tile in _Tiles)
         {
-            if (!tile.gameObject.activeInHierarchy)
+            if (!tile.activeInHierarchy)
             {
                 tile.SetActive(true);
                 return tile;

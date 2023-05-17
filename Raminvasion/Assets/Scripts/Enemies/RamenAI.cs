@@ -1,5 +1,7 @@
+// Created 15.05.2023 by Krista Plagemann //
+// Makes the enemy ramen follow the player using navmesh //
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 

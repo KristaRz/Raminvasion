@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 10f;
     [SerializeField] private float jumpHeight = 15f;
     [SerializeField] private PhysicalCC physicalCC;
 
@@ -14,12 +14,14 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
 	{
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            speed = 20;
+        if(Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift))
+            speed = 10;
+
         if (physicalCC.isGround)
 		{
-			physicalCC.moveInput = Vector3.ClampMagnitude(transform.forward
-							* Input.GetAxis("Vertical")
-							+ transform.right
-							* Input.GetAxis("Horizontal"), 1f) * speed;
+			physicalCC.moveInput = Vector3.ClampMagnitude(transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal"), 1f) * speed;
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
