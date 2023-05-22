@@ -7,6 +7,13 @@ using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
+public enum TileDirection
+{ 
+    Horizontal, Vertical, 
+    LeftFront, FrontRight, RightBack, BackLeft, 
+    BackLeftFront, LeftFrontRight, FrontRightBack, RightBackLeft, 
+    LeftDead, FrontDead, RightDead
+};
 
 public class TileGenerator : MonoBehaviour
 {
