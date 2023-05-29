@@ -33,7 +33,8 @@ public class OneLane : MonoBehaviour
         arrayDepth += extensionAmount;
         GenerateLane();
 
-        Debug.Log("Lane extended by " + extensionAmount);
+
+        //Debug.Log("Lane extended by " + extensionAmount);
     }
 }
 
