@@ -8,6 +8,10 @@ public class OneLane : MonoBehaviour
     public int arrayDepth = 30;
     public float cubeSpacing = 1.0f; // new variable for cube spacing
 
+<<<<<<< HEAD:Raminvasion/Assets/OneLane.cs
+=======
+
+>>>>>>> maze:Raminvasion/Assets/Scripts/LaneExtension/OneLane.cs
     private void Start()
     {
         GenerateLane();
@@ -32,8 +36,14 @@ public class OneLane : MonoBehaviour
     {
         arrayDepth += extensionAmount;
         GenerateLane();
+<<<<<<< HEAD:Raminvasion/Assets/OneLane.cs
 
         Debug.Log("Lane extended by " + extensionAmount);
     }
 }
+=======
+>>>>>>> maze:Raminvasion/Assets/Scripts/LaneExtension/OneLane.cs
 
+        Debug.Log("Lane extended by " + extensionAmount);
+    }
+}
