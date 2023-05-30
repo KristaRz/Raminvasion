@@ -1,4 +1,4 @@
-/*Kaan Koçak              Procedural Level Generation Elective                 May 2023/
+/*Kaan Koï¿½ak              Procedural Level Generation Elective                 May 2023/
 /*
  * MazeGenerator.cs
  * 
@@ -117,6 +117,9 @@ public class MazeGenerator : MonoBehaviour
                 int newRow = currentRow + direction.y;
                 int newColumn = currentColumn + direction.x;
 
+                //Changing previous adjacent Tile with direction=Vector2Int.up to Curve
+                gameObject.GetComponent<MazeTileDeclaration>().ChangePreviousTile(mazeGrid[currentColumn,currentRow],direction,i);
+
                 // Check if the next position goes beyond the array boundaries on the front direction
                 if (newRow >= gridSizeZ - 1)
                 {
@@ -126,6 +129,9 @@ public class MazeGenerator : MonoBehaviour
 
                 // Instantiate the tile at the new position
                 GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
+                
+                //Declaring Tile Direction & Curves for adjacent Tiles
+                gameObject.GetComponent<MazeTileDeclaration>().DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
 
                 // Store the tile in the mazeGrid array and mark it as 1
                 mazeGrid[newColumn, newRow] = newTile;
