@@ -22,6 +22,7 @@
 
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
@@ -57,7 +58,16 @@ public class MazeGenerator : MonoBehaviour
     {
         if (mazeObject != null)
         {
-            Destroy(mazeObject);
+            //Deactivate Tile Objects in Objectpool
+            List<GameObject> toDisableObjects = new();
+            foreach (Transform child in mazeObject.transform)
+            {
+                toDisableObjects.Add(child.gameObject);
+            }
+            ObjectPool.Instance.DisableObjects(toDisableObjects);
+            
+            // Destroy(mazeObject);
+
         }
 
         mazeObject = new GameObject("Maze");
@@ -70,7 +80,14 @@ public class MazeGenerator : MonoBehaviour
 
         // Randomly create a tile on the first row
         int startColumn = Random.Range(0, gridSizeX);
-        mazeGrid[startColumn, 0] = Instantiate(tilePrefab, new Vector3(startColumn * tileSize, 0f, 0f), Quaternion.identity, parent);
+
+        // mazeGrid[startColumn, 0] = Instantiate(tilePrefab, new Vector3(startColumn * tileSize, 0f, 0f), Quaternion.identity, parent);
+
+        //Instead of Instantiating, activating Tile in ObjectPool
+        mazeGrid[startColumn, 0]=ObjectPool.Instance.GetTile();
+        mazeGrid[startColumn, 0].transform.position=new Vector3(startColumn * tileSize, 0f, 0f);
+        mazeGrid[startColumn,0].transform.rotation=Quaternion.identity;
+        mazeGrid[startColumn,0].transform.parent=parent;
 
         // Set the initial direction
         Vector2Int direction = Vector2Int.up;
@@ -127,8 +144,14 @@ public class MazeGenerator : MonoBehaviour
                     direction = (currentColumn == 0) ? Vector2Int.right : Vector2Int.left;
                 }
 
-                // Instantiate the tile at the new position
-                GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
+                // //Instantiate the tile at the new position
+                // GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
+
+                //Instead of Instantiating, activating Tile in ObjectPool
+                GameObject newTile=ObjectPool.Instance.GetTile();
+                newTile.transform.position=new Vector3(newColumn * tileSize, 0f, newRow * tileSize);
+                newTile.transform.rotation=Quaternion.identity;
+                newTile.transform.parent=parent;
                 
                 //Declaring Tile Direction & Curves for adjacent Tiles
                 gameObject.GetComponent<MazeTileDeclaration>().DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
