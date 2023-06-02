@@ -3,17 +3,11 @@
 // Earlier:Generates a single line of tiles 4x8 upon entering trigger collider.//
 
 
+using System;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
-
-// public enum TileDirection
-// { 
-//     Horizontal, Vertical, 
-//     LeftFront, FrontRight, RightBack, BackLeft, 
-//     BackLeftFront, LeftFrontRight, FrontRightBack, RightBackLeft, 
-//     LeftDead, FrontDead, RightDead
-// };
+using UnityEngine.Events;
 
 public class TileGenerator : MonoBehaviour
 {
@@ -38,127 +32,163 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private Transform _PlayerToTrack;
     [SerializeField] private Transform _VacuumRamenToTrack;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
-    //[SerializeField] private GameObject _Collider;
 
-    [SerializeField] private int _LaneColumns = 4;
-    [SerializeField] private int _LaneRows = 8;
-    [SerializeField] private float _TileWidth = 10;
+    [SerializeField] private int _LaneColumns = 20;
+    [SerializeField] private int _LaneRows = 20;
+    [SerializeField] private int _TileWidth = 20;
 
     private float _offset;
     private int _rowsGeneratedIndex = 0;
     private int _lastRowActive = 0;
-    private List<GameObject> _activeSortedTiles = new();
-    //private int _tilesActive = 0;
+    private List<TileInformation> _activeSortedTiles = new();
 
+    private bool firstMazeReady = false;
+
+    private GameObject _mazeParent;
+    
     [SerializeField] private NavMeshSurface _navMeshSurface;
     private void Start()
     {
-        _offset = (_LaneColumns / 2) * _TileWidth - _TileWidth / 2;
-        GenerateFirstLanes();
+        _offset = ((_LaneColumns / 2) * _TileWidth);
+        _mazeParent = new GameObject();
+        MazeGenerator.Instance.OnMazeGenerated += FinishedMazeGeneration;
+        OnSingleLineReady += GenerateSingleRow;
+
+        OnFirstLaneGenerated.AddListener(GenerateRestLanes);    // to generate the rest of the beginning lines that are started below
+        GetNewLine();   // Spawn one line at the beginning
     }
 
-    public void GenerateNewLane()
+    private List<List<TileInformation>> _nextBatch = new();
+
+    public UnityEvent OnFirstLaneGenerated;
+    private event Action<List<TileInformation>> OnSingleLineReady;
+
+    private void GenerateRestLanes()
     {
-        //GenerateLane();
+        OnFirstLaneGenerated.RemoveListener(GenerateRestLanes);
+
+        for (int i = 0; i < _TilesVisibleForward - 1; i++)
+            GetNewLine();
+        firstMazeReady = true;
     }
 
-    /*
-    private void GenerateLane()
-    {
-        for (int i = 0; i < _LaneRows; i++)
-        {
-            _rowsGeneratedIndex++;
-            for (int j = 0; j < _LaneColumns; j++)
-            {
-                GameObject newTile = ObjectPool.Instance.GetTile();
-                newTile.transform.position = new Vector3(j * _TileWidth - _offset, newTile.transform.position.y, (_rowsGeneratedIndex * _TileWidth) - (_TileWidth/2));
-                //Debug.Log($"Row: {_rowsGeneratedIndex}, Column: {j}, Position: {newTile.transform.position}");
-                _activeSortedTiles.Add(newTile);
-                _tilesActive++;
-
-                if (_tilesActive >= _LaneRows * _LaneColumns * 3)
-                {
-                    List<GameObject> toDisableObjects = new();
-                    int oneBatch = _LaneRows * _LaneColumns;
-                    for (int k = 0; k < oneBatch; k++)
-                    {
-                        toDisableObjects.Add(_activeSortedTiles[0]);
-                        _activeSortedTiles.RemoveAt(0);
-                        
-                    }
-                    ObjectPool.Instance.DisableObjects(toDisableObjects);
-                    _tilesActive -= oneBatch;
-                }
-            }
-        }
-        _Collider.transform.position = new Vector3( 0, 0, (_rowsGeneratedIndex * _TileWidth) - (_LaneRows* _TileWidth) + (2 * _TileWidth));
-
-        _navMeshSurface.BuildNavMesh();
-    }
-    */
-
-    private List<List<int>> _nextBatch = new();
-    
-    private void GenerateFirstLanes()
-    {
-        for (int i = 0; i < _TilesVisibleForward; i++)
-            GenerateSingleLine();
-    }
-
+    // We check the Player position to spawn new tiles in the front and
+    // check the Ramen position to remove lines behind it.
     private void Update()
     {
-        if (_PlayerToTrack.position.z >= (_rowsGeneratedIndex - _TilesVisibleForward)* _TileWidth)
-            GenerateSingleLine();
-        if(_VacuumRamenToTrack.position.z >= (_lastRowActive +2) * _TileWidth)
-            RemoveSingleLine();
+        if (firstMazeReady)
+        {
+            if (_PlayerToTrack.position.z >= (_rowsGeneratedIndex - _TilesVisibleForward) * _TileWidth)
+                GetNewLine();
+
+            if (_VacuumRamenToTrack.position.z >= (_lastRowActive + 2) * _TileWidth)
+                RemoveSingleLine();
+        }
     }
 
-    private void GenerateSingleLine()
+    // Instantiates a row of tiles from the object pool
+    private void GenerateSingleRow(List<TileInformation> lines)
     {
-        List<int> lines = GetNewLine();
         _rowsGeneratedIndex++;
+        //Debug.Log(_rowsGeneratedIndex);
         for (int j = 0; j < lines.Count; j++)
         {
-            // if(_lines[j] == 0)
-            // make a straight line or make a corner etc
-
             GameObject newTile = ObjectPool.Instance.GetTile();
-            newTile.transform.position = new Vector3(j * _TileWidth - _offset, newTile.transform.position.y, (_rowsGeneratedIndex * _TileWidth) - (_TileWidth / 2));
-            //Debug.Log($"Row: {_rowsGeneratedIndex}, Column: {j}, Position: {newTile.transform.position}");
-            _activeSortedTiles.Add(newTile);
+            newTile.transform.position = new Vector3(lines[j].IndexX * _TileWidth - _offset, newTile.transform.position.y, (_rowsGeneratedIndex * _TileWidth) - (_TileWidth / 2));
+            newTile.transform.localScale = Vector3.one * _TileWidth;
+            newTile.transform.parent = _mazeParent.transform;
+            newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
+
+            lines[j].TileObject = newTile;
+            _activeSortedTiles.Add(lines[j]);
         }
 
-        _navMeshSurface.BuildNavMesh();
+        OnFirstLaneGenerated?.Invoke();  // this is empty after the first one so maybe remove later with bool or smth
+        _navMeshSurface.BuildNavMesh(); // every time we make a row, we build the navmesh new with all active ones
     }
 
-    private void RemoveSingleLine()
-    {
-        List<GameObject> toDisableObjects = new();
-        for (int k = 0; k < _LaneColumns; k++)
-        {
-            toDisableObjects.Add(_activeSortedTiles[0]);
-            _activeSortedTiles.RemoveAt(0);
-        }
-        ObjectPool.Instance.DisableObjects(toDisableObjects);
-        _lastRowActive++;
-    }
-
-    private List<int> GetNewLine()
+    // Receive one new row. If there is none left, generate a new maze
+    private void GetNewLine()
     {
         if (_nextBatch.Count <= 0)
         {
-            _nextBatch = GenerateNewTiles();
-            List<int> toReturn = _nextBatch[0];
-            _nextBatch.RemoveAt(0);
-            return toReturn;
+            //Debug.Log("Getting new line");
+            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth);
         }
         else
         {
-            List<int> toReturn = _nextBatch[0];
+            List<TileInformation> toReturn = new(_nextBatch[0]);
             _nextBatch.RemoveAt(0);
-            return toReturn;
-        }       
+            //Debug.Log("Lines list to spawn length: " + toReturn.Count);
+            OnSingleLineReady?.Invoke(toReturn);
+        }
     }
+
+    // Makes a line behind ramen disappear
+    private void RemoveSingleLine()
+    {
+        List<GameObject> toDisableObjects = new(GetLine());
+
+        if (toDisableObjects != null)
+        {
+            for (int k = 0; k < toDisableObjects.Count; k++)
+            {
+                _activeSortedTiles.RemoveAt(0);
+            }
+            ObjectPool.Instance.DisableObjects(toDisableObjects);
+            _lastRowActive++;
+        }
+
+        // This is called in the first line of this function, i just didn't want to put it outside lol (it's like its own void function)
+        List<GameObject> GetLine()
+        {
+            List<GameObject> toDisableObjects = new();
+            int lowestIndex = _activeSortedTiles[0].IndexZ;
+            for (int k = 0; k < _activeSortedTiles.Count; k++)
+            {
+                if (_activeSortedTiles[k].IndexZ != lowestIndex)
+                    return toDisableObjects;
+                else
+                    toDisableObjects.Add(_activeSortedTiles[k].TileObject);
+            }
+            return null;
+        }
+    }
+
+    // Hacks the continous list into lists that contain all tiles of a single row (row lists are stored in the outer list :D)
+    private List<List<TileInformation>> ChopTileListIntoRows(List<TileInformation> tileBatch)
+    {
+        //Debug.Log(tileBatch[0].IndexZ + " while we are in " + _rowsGeneratedIndex);
+        List<TileInformation> givenTiles = new(tileBatch);
+        List<List<TileInformation>> returnList = new();
+        for(int i  = 0; i < _LaneRows; i++)
+        {
+            List<TileInformation> listToFill = new();
+            foreach(var tile in givenTiles)
+                if(tile.IndexZ-_rowsGeneratedIndex == i)
+                    listToFill.Add(tile);
+            foreach(var removeTile in listToFill)
+                givenTiles.Remove(removeTile);
+
+            returnList.Add(listToFill);
+        }
+        //Debug.Log("Chopped tiles. " + returnList.Count);
+        return returnList;
+    }
+
+    private void FinishedMazeGeneration(List<TileInformation> newMazeTiles)
+    {
+        //Debug.Log("Finished maze generation in tile spawner"+ newMazeTiles.Count);
+
+        _nextBatch = new();
+        _nextBatch = ChopTileListIntoRows(newMazeTiles);
+
+        List<TileInformation> toReturn = _nextBatch[0];
+        _nextBatch.RemoveAt(0);
+
+        OnSingleLineReady?.Invoke(toReturn);
+    }
+/*
 
     public List<List<int>> GenerateNewTiles()
     {
@@ -173,5 +203,5 @@ public class TileGenerator : MonoBehaviour
             returnList.Add(listToFill);
         }
         return returnList;
-    }
+    }*/
 }

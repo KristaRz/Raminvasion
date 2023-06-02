@@ -15,7 +15,7 @@ public class FoodDistribution : MonoBehaviour
     private void Start() {
         for (int i = 0; i < foodAmount; i++)
         {
-            Vector3 randomPosition = tileGround.transform.position + new Vector3(Random.Range(-foodRadius, foodRadius), 1f, Random.Range(-foodRadius, foodRadius));
+            Vector3 randomPosition = tileGround.transform.position + new Vector3(Random.Range(-foodRadius, foodRadius), 2f, Random.Range(-foodRadius, foodRadius));
             Instantiate(foodPrefab, randomPosition, Quaternion.identity,this.gameObject.transform);
         }
     }

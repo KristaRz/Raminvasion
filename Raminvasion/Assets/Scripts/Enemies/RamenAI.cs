@@ -52,7 +52,6 @@ public class RamenAI : MonoBehaviour
         if (_active)
         {
             _agent.speed += SpeedupRate * Time.deltaTime;
-            Debug.Log(_agent.speed);
             _agent.SetDestination(_Player.position);
         }
     }
