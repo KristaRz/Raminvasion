@@ -21,12 +21,22 @@
 
 
 
-using System.Collections;
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
+    public static MazeGenerator Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(Instance);
+    }
+
     public int minAdjacentTiles = 3;
     public int maxAdjacentTiles = 5;
     public GameObject tilePrefab;
@@ -40,10 +50,9 @@ public class MazeGenerator : MonoBehaviour
     public KeyCode regenerateKey = KeyCode.R;
     private GameObject mazeObject;
 
-    private void Start()
+    private void OnEnable()
     {
-
-        RegenerateMaze();
+        //RegenerateMaze();
     }
 
     private void Update()
@@ -65,29 +74,34 @@ public class MazeGenerator : MonoBehaviour
                 toDisableObjects.Add(child.gameObject);
             }
             ObjectPool.Instance.DisableObjects(toDisableObjects);
-            
+
             // Destroy(mazeObject);
 
         }
 
         mazeObject = new GameObject("Maze");
 
-        StartCoroutine(GenerateMaze(mazeObject.transform));
+        //StartCoroutine(GenerateMaze(mazeObject.transform));
     }
+/*
     private IEnumerator GenerateMaze(Transform parent)
     {
         mazeGrid = new GameObject[gridSizeX, gridSizeZ];
 
-        // Randomly create a tile on the first row
-        int startColumn = Random.Range(0, gridSizeX);
+        // Randomly create a tile on the first row [EDIT: Changed it always start in the middle]
+        //int startColumn = Random.Range(0, gridSizeX);
+        int startColumn = gridSizeX / 2;
 
         // mazeGrid[startColumn, 0] = Instantiate(tilePrefab, new Vector3(startColumn * tileSize, 0f, 0f), Quaternion.identity, parent);
 
         //Instead of Instantiating, activating Tile in ObjectPool
-        mazeGrid[startColumn, 0]=ObjectPool.Instance.GetTile();
-        mazeGrid[startColumn, 0].transform.position=new Vector3(startColumn * tileSize, 0f, 0f);
-        mazeGrid[startColumn,0].transform.rotation=Quaternion.identity;
-        mazeGrid[startColumn,0].transform.parent=parent;
+        GameObject newMazeTile = ObjectPool.Instance.GetTile(); // Instead of always going into the list to find it, we can just work with a direct access to the object       
+        newMazeTile.transform.position = new Vector3(startColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, 0f);
+        newMazeTile.transform.rotation = Quaternion.identity;
+        newMazeTile.transform.localScale = Vector3.one * 20;
+        newMazeTile.transform.parent = parent;
+
+        mazeGrid[startColumn, 0] = newMazeTile;
 
         // Set the initial direction
         Vector2Int direction = Vector2Int.up;
@@ -100,7 +114,7 @@ public class MazeGenerator : MonoBehaviour
         while (currentRow < gridSizeZ - 1)
         {
             // Decide the number of adjacent tiles
-            int numAdjacentTiles = Random.Range(minAdjacentTiles, maxAdjacentTiles + 1);
+            int numAdjacentTiles = UnityEngine.Random.Range(minAdjacentTiles, maxAdjacentTiles + 1);
 
             // Change direction based on the current direction
             if (direction == Vector2Int.up)
@@ -119,7 +133,7 @@ public class MazeGenerator : MonoBehaviour
                 else
                 {
                     // Randomly decide between left and right
-                    direction = Random.value < 0.5f ? Vector2Int.left : Vector2Int.right;
+                    direction = UnityEngine.Random.value < 0.5f ? Vector2Int.left : Vector2Int.right;
                 }
             }
             else
@@ -135,7 +149,7 @@ public class MazeGenerator : MonoBehaviour
                 int newColumn = currentColumn + direction.x;
 
                 //Changing previous adjacent Tile with direction=Vector2Int.up to Curve
-                gameObject.GetComponent<MazeTileDeclaration>().ChangePreviousTile(mazeGrid[currentColumn,currentRow],direction,i);
+                MazeTileDeclaration.ChangePreviousTile(mazeGrid[currentColumn, currentRow], direction, i);
 
                 // Check if the next position goes beyond the array boundaries on the front direction
                 if (newRow >= gridSizeZ - 1)
@@ -148,13 +162,14 @@ public class MazeGenerator : MonoBehaviour
                 // GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
 
                 //Instead of Instantiating, activating Tile in ObjectPool
-                GameObject newTile=ObjectPool.Instance.GetTile();
-                newTile.transform.position=new Vector3(newColumn * tileSize, 0f, newRow * tileSize);
-                newTile.transform.rotation=Quaternion.identity;
-                newTile.transform.parent=parent;
-                
+                GameObject newTile = ObjectPool.Instance.GetTile();
+                newTile.transform.position = new Vector3(newColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, newRow * tileSize);
+                newTile.transform.rotation = Quaternion.identity;
+                newTile.transform.localScale = Vector3.one * 20;
+                newTile.transform.parent = parent;
+
                 //Declaring Tile Direction & Curves for adjacent Tiles
-                gameObject.GetComponent<MazeTileDeclaration>().DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
+                MazeTileDeclaration.DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
 
                 // Store the tile in the mazeGrid array and mark it as 1
                 mazeGrid[newColumn, newRow] = newTile;
@@ -176,16 +191,319 @@ public class MazeGenerator : MonoBehaviour
 
     }
 
+*/
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
 
         Vector3 gridSize = new Vector3(gridSizeX * tileSize, 0f, gridSizeZ * tileSize);
-        Gizmos.DrawWireCube(gridSize / 2f, gridSize);
+        Gizmos.DrawWireCube(new Vector3(0f, 0f, gridSize.z / 2), gridSize);
+    }
+
+    [SerializeField] private bool _TurnOnBuggyDeadends = false;
+    [SerializeField] private int _DeadendIterations = 20;
+    [SerializeField] private int _DeadendLength = 3;
+
+    public event Action<List<TileInformation>> OnMazeGenerated = delegate { };
+
+
+    private List<TileInformation> continuousMazeDirections = new();
+    private int maxColumns = 20;
+    private int _adjacentTilesLeft = 0;
+    private TileInformation lastTile = null;
+    private bool _firstMazeGenerated = false;
+
+    // 1 Vertical, 2 Horizontal,
+
+    public void GenerateMazeBlueprint(int columns, int rows, int tileSize)
+    {
+        maxColumns = columns;
+        int randomAdjacentAmount = 0;
+
+        // Starts the maze in the middle
+        int startColumn = columns / 2;
+
+        // Deciding the first tile direction based on previous maze or new directions if first maze
+        int newTileDirection = 0;
+
+        if (lastTile == null)   // if this is first maze
+        {
+
+            newTileDirection = 1;
+            lastTile = new TileInformation(startColumn, 0, newTileDirection, TileDirection.Vertical);  // create a tile at our current standpoint
+        }
+        else
+        {
+            randomAdjacentAmount = _adjacentTilesLeft;
+            if(_adjacentTilesLeft == 0)
+                newTileDirection = UnityEngine.Random.value < 0.5f ? 1 : 2;
+        }
+        continuousMazeDirections.Clear();
+        continuousMazeDirections = new() { lastTile };  // make a new list with only the last tile as starting point
+        //Debug.Log("Starting the maze");
+
+
+        for (int i = 0; i < rows-1 ; i++)
+        {
+            if (randomAdjacentAmount <= 0)
+            {
+                randomAdjacentAmount = UnityEngine.Random.Range(minAdjacentTiles - 1, maxAdjacentTiles);
+                _adjacentTilesLeft = randomAdjacentAmount;
+            }
+           
+            //Debug.Log("repeating with more");
+
+            // If last was vertical we just make a new vertical one and bye haha
+            if (lastTile.TileDirectionIndex == 1)
+            {
+                // Reduce the adjacent tile count. If we are done with them, change direction
+                randomAdjacentAmount--;
+                TileInformation newTileInfo;
+                if (randomAdjacentAmount <= 0)
+                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 2, TileDirection.Horizontal); // add horizontal if end
+                else
+                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical); // else add vertical again
+                continuousMazeDirections.Add(newTileInfo);
+            }
+            else  // if last was horizontal
+            {
+                int randomDirection = UnityEngine.Random.value < 0.5f ? -1 : 1;    // -1 = Left, 1 = Right
+                GenerateHorizontal(randomAdjacentAmount, randomDirection);  // Generates the continuous lane
+
+                // And then adds one vertical
+                randomAdjacentAmount = UnityEngine.Random.Range(minAdjacentTiles - 1, maxAdjacentTiles);
+                _adjacentTilesLeft = randomAdjacentAmount-1;
+
+                TileInformation newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical); // else add vertical again
+                continuousMazeDirections.Add(newTileInfo);
+            }
+
+            lastTile = continuousMazeDirections[^1];
+        }
+
+        lastTile = continuousMazeDirections[^1];
+        _adjacentTilesLeft = randomAdjacentAmount;
+
+        List<TileInformation> declaredTile = MazeTileDeclaration.DeclareTileTypes(continuousMazeDirections, lastTile, _firstMazeGenerated);
+        continuousMazeDirections = declaredTile;
+
+        if (_firstMazeGenerated)
+            continuousMazeDirections.RemoveAt(0);   // if we make subsequent mazes, we need to get rid of the 0th tile bcs its a double for tile types
+        _firstMazeGenerated = true;
+
+        //Debug.Log(continuousMazeDirections.Count);
+        if(_TurnOnBuggyDeadends)
+            SpawnDeadEnds(_DeadendIterations, _DeadendLength);
+
+        OnMazeGenerated?.Invoke(continuousMazeDirections);
     }
 
 
 
+    private void GenerateHorizontal(int numAdjacentTiles, int randomTileDirection)
+    {
+        //Debug.Log("Running a horizontal adjacent tiles task.");
+        int newTileDirection;
+        TileDirection newTileDirectionEnum;
 
+        // Spawn tiles according to numAdjacentTiles
+        for (int i = 1; i <= numAdjacentTiles; i++)
+        {
+            if (lastTile.IndexX + randomTileDirection <= 0 || lastTile.IndexX + randomTileDirection >= maxColumns // when we hit left or right
+                || i == numAdjacentTiles)     // or this is the last tile
+            {
+                // next Tile is a vertical one again
+                newTileDirection = 1;
+                newTileDirectionEnum = TileDirection.Vertical;
+            }
+            else // if previous was horizontal tile
+            {
+                // next tile is a horizontal one again
+                newTileDirection = 2;
+                newTileDirectionEnum = TileDirection.Horizontal;
+            }
+            TileInformation newTileInfo = new TileInformation
+                (lastTile.IndexX + randomTileDirection, lastTile.IndexZ, newTileDirection, newTileDirectionEnum);
+
+            continuousMazeDirections.Add(newTileInfo);
+            lastTile = newTileInfo;
+        }
+    }
+
+
+    ///////////////////////////////////
+    //////////// DEADENDS /////////////
+    ///////////////////////////////////
+
+    private void SpawnDeadEnds(int amount, int deadEndLength)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            List<TileInformation> singleDeadend = new();
+
+            TileInformation randomStartpoint = continuousMazeDirections[UnityEngine.Random.Range(continuousMazeDirections.Count-1, 0)];
+            singleDeadend.Add(randomStartpoint);
+
+            // Try to find a position around that is free (tries twice)
+            TileInformation firstTilePos = TryFindStartPoint(randomStartpoint, false);
+            if (firstTilePos.TileDirectionIndex != 0) // kind of a null check 
+            {
+                // Check if all the tiles around are free (except for the one we came from)
+                bool firstTileSurround = CheckIfTileFreeSurround(firstTilePos.IndexX, firstTilePos.IndexZ, true, new Vector2(randomStartpoint.IndexX, randomStartpoint.IndexZ));
+                if (firstTileSurround)
+                {
+                    singleDeadend.Add(firstTilePos);
+
+                    int amountAccepted = 0;
+                    TileInformation previousTilePos = firstTilePos;
+
+                    for (int k = 0; k < deadEndLength - 1; k++)
+                    {
+                        TileInformation newTilePosition = TryFindStartPoint(previousTilePos, true);
+                        if (newTilePosition.TileDirectionIndex != 0) // kind of a null check
+                        {
+                            bool tileSurroundingFree = CheckIfTileFreeSurround(newTilePosition.IndexX, newTilePosition.IndexZ, true, new Vector2(previousTilePos.IndexX, previousTilePos.IndexZ));
+                            if (tileSurroundingFree)
+                            {
+                                amountAccepted++;
+                                previousTilePos = newTilePosition;
+                                singleDeadend.Add(newTilePosition);
+                            }
+                        }
+                    }
+                    if (amountAccepted >= deadEndLength - 1)
+                    {
+                        List<TileInformation> declaredTile = MazeTileDeclaration.DeclareDeadEndTypes(singleDeadend, continuousMazeDirections);
+                        continuousMazeDirections = declaredTile;
+                    }
+                }
+            }         
+        }       
+    }
+
+    private TileInformation TryFindStartPoint(TileInformation randomStartpoint, bool includeAll)
+    {
+        int randomChecked = 0;
+        int maxDirections = 3;
+        // Check twice if we can find a free direction
+        for (int j = 0; j < 2; j++)
+        {
+            if (includeAll)
+                maxDirections = 4;
+            int randomDirection = UnityEngine.Random.Range(1, maxDirections);
+            while (randomDirection == randomChecked)
+                randomDirection = UnityEngine.Random.Range(1, maxDirections);
+
+            switch (randomDirection)
+            {
+                /// Left ///
+                case 1:
+                    if (CheckIfTileFree(randomStartpoint.IndexX - 1, randomStartpoint.IndexZ))
+                    {
+                        randomStartpoint.TileDirectionIndex = 2;
+                        return new TileInformation(randomStartpoint.IndexX - 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal);
+                    }
+                    break;
+                /// Foward ///
+                case 2:
+                    if (CheckIfTileFree(randomStartpoint.IndexX, randomStartpoint.IndexZ + 1))
+                    {
+                        randomStartpoint.TileDirectionIndex = 1;
+                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ + 1, 1, TileDirection.Vertical);
+                    }
+                    break;
+                /// Right ///
+                case 3:
+                    if (CheckIfTileFree(randomStartpoint.IndexX + 1, randomStartpoint.IndexZ))
+                    {
+                        randomStartpoint.TileDirectionIndex = 2;
+                        return new TileInformation(randomStartpoint.IndexX + 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal);
+                    }
+                    break;
+                /// Back ///
+                case 4:
+                    if (CheckIfTileFree(randomStartpoint.IndexX, randomStartpoint.IndexZ - 1))
+                    {
+                        randomStartpoint.TileDirectionIndex = 1;
+                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ - 1, 1, TileDirection.Vertical);
+                    }
+                    break;
+
+            }
+        }
+        return new TileInformation(-1, -1, 0, TileDirection.Vertical);
+    }
+
+    private bool CheckIfTileFree(float indexX, float indexY)
+    {
+        foreach (var tile in continuousMazeDirections)
+        {
+            if (tile.IndexX == indexX && tile.IndexZ == indexY)
+                return false;
+        }
+        return true;
+    }
+
+    private bool CheckIfTileFreeSurround(float indexX, float indexY, bool excludeOriginal, Vector2 originalTile)
+    {
+        bool leftFree = CheckIfTileFree(indexX - 1, indexY);
+        bool rightFree = CheckIfTileFree(indexX + 1, indexY);
+        bool forwardFree = CheckIfTileFree(indexX, indexY + 1);
+        bool backFree = CheckIfTileFree(indexX, indexY - 1);
+
+        if (excludeOriginal)
+        {
+            Vector2 offset = originalTile - new Vector2(indexX, indexY);
+            
+            if (offset.x > 0) // Old tile right
+                rightFree = true;
+            else if (offset.x < 0) // Old tile left
+                leftFree = true;
+            else if(offset.y < 0) // Old tile back
+                backFree = true;
+        }
+
+        if (leftFree && forwardFree && backFree && rightFree)
+            return true;
+        else
+            return false;
+    }
+
+
+}
+
+[Serializable]
+public class TileInformation
+{
+    /// <summary>
+    /// Index of the tile on the x axis (from 0 to maximum amount of columns)
+    /// </summary>
+    public int IndexX;
+
+    /// <summary>
+    /// Index of the tile on the z axis (from 0 to maximum amount of rows)
+    /// </summary>
+    public int IndexZ;
+    /// <summary>
+    /// A simple int 1 or 2 to declare Vertical(1) or Horizontal(2) direction while generating the maze
+    /// </summary>
+    public int TileDirectionIndex;
+    /// <summary>
+    /// The precise direction or type of the tile.
+    /// </summary>
+    public TileDirection Direction;
+    /// <summary>
+    /// The GameObject when instantiated.
+    /// </summary>
+    public GameObject TileObject;
+
+
+    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction)
+    {
+        IndexX = indexX;
+        IndexZ = indexZ;
+        TileDirectionIndex = tileDirectionIndex;
+        Direction = direction;       
+    }
 }

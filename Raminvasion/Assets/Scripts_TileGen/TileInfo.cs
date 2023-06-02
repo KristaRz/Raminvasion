@@ -6,9 +6,10 @@ using UnityEngine;
 
 public enum TileDirection{ 
     Vertical, Horizontal,
-    RightBack, BackLeft, LeftFront ,FrontRight,
+    BackRight, BackLeft, LeftFront ,RightFront,
     LeftFrontRight, FrontRightBack, RightBackLeft, BackLeftFront, 
-    LeftDead,FrontDead, RightDead
+    LeftDead,FrontDead, RightDead,
+    Empty
 }
 
 public enum TileType{
@@ -52,7 +53,7 @@ public class TileInfo : MonoBehaviour
             break;
 
             //Curved
-            case TileDirection.RightBack:
+            case TileDirection.BackRight:
             DeclareTileType(TileType.Curved);
             this.gameObject.transform.eulerAngles=new Vector3(0,0,0);
             break;
@@ -67,7 +68,7 @@ public class TileInfo : MonoBehaviour
             this.gameObject.transform.eulerAngles=new Vector3(0,180,0);
             break;
 
-            case TileDirection.FrontRight:
+            case TileDirection.RightFront:
             DeclareTileType(TileType.Curved);
             this.gameObject.transform.eulerAngles=new Vector3(0,270,0);
             break;
@@ -127,7 +128,7 @@ public class TileInfo : MonoBehaviour
             wallRight.SetActive(true);
             break;
 
-            //default RightBack
+            //default BackRight
             case TileType.Curved:
             wallRight.SetActive(false);
             wallDown.SetActive(false);
@@ -135,7 +136,7 @@ public class TileInfo : MonoBehaviour
             wallLeft.SetActive(true);
             break;
             
-            //default LeftFrontRight
+            //default LeftRightFront
             case TileType.Fork:
             wallRight.SetActive(false);
             wallDown.SetActive(true);
@@ -155,7 +156,7 @@ public class TileInfo : MonoBehaviour
     }
 
     private void Start() {
-        DeclareTileDirection(tileDirection);  
+       // DeclareTileDirection(tileDirection);  
         tiledirectionCount=System.Enum.GetNames(typeof(TileDirection)).Length;
     }
 
