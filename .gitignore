@@ -67,6 +67,7 @@ crashlytics-build.properties
 # Packed Addressables
 /Raminvasion/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
+
 # Temporary auto-generated Android Assets
 /Raminvasion/[Aa]ssets/[Ss]treamingAssets/aa.meta
 /Raminvasion/[Aa]ssets/[Ss]treamingAssets/aa/*
