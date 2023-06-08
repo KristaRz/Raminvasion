@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public enum TileArea{
+    MainPath,
+    SecondaryPath,
+    DeadEnd
+}
 
 public enum TileDirection{ 
     Vertical, Horizontal,
