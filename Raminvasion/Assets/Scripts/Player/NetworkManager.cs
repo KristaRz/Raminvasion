@@ -5,11 +5,19 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-    private void Start()
+    public static NetworkManager Instance { get; private set; }
+
+    private void Awake() => Instance = this;
+
+    private string _roomName = "DefaultRoom";
+
+    public void Start()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
         ConnectToServer();
     }
 
@@ -23,29 +31,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // We are getting the following functions from the MonoBehaviourPunCallbacks that we derive this class form
     public override void OnConnectedToMaster()
     {
+        PhotonNetwork.JoinLobby();
         Debug.Log("Connected to server.");
         base.OnConnectedToMaster();
-
-        // We make a new set of room options for the room we want to open. You can assign these with a 
-        RoomOptions roomOptions = new()
-        {
-            MaxPlayers = 2,    // hover over names to see explanations
-            IsVisible = true,
-            IsOpen = true
-        };
-        // When we connect to the server we create or join "Room 1".
-        PhotonNetwork.JoinOrCreateRoom("Room 1", roomOptions, TypedLobby.Default);
     }
 
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Joined a room.");
-        base.OnJoinedRoom();
-    }
-
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Debug.Log("Someone joined a room.");
-        base.OnPlayerEnteredRoom(newPlayer);
-    }
 }

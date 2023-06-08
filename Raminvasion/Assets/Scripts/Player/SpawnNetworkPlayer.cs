@@ -7,13 +7,17 @@ using UnityEngine;
 
 public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
 {
-    private GameObject _spawnedPlayerPrefab;
+    public GameObject MenuCamera;
+
+    public GameObject _spawnedPlayerPrefab;
 
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
         // When we join a room, we spawn an Avatar for ourselves(the NetworkPlayer). This will be visible to others then since we instantiate it in the network.
-        _spawnedPlayerPrefab = PhotonNetwork.Instantiate("NetworkPlayer", transform.position, transform.rotation);
+        //_spawnedPlayerPrefab = PhotonNetwork.Instantiate("NetworkPlayer", transform.position, transform.rotation);
+        _spawnedPlayerPrefab.SetActive(true);
+        MenuCamera.SetActive(false);
     }
 
     public override void OnLeftRoom()
@@ -21,5 +25,6 @@ public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
         base.OnLeftRoom();
         // When we leave the room again, we also destroy our avatar on the network
         PhotonNetwork.Destroy(_spawnedPlayerPrefab);
+        MenuCamera.SetActive(true);
     }
 }

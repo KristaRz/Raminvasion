@@ -7,8 +7,6 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum PlayerTag { Player1, Player2 }
-
 public class RamenAI : MonoBehaviour
 {
     [SerializeField] private PlayerTag _RamenEnemy;
@@ -24,27 +22,42 @@ public class RamenAI : MonoBehaviour
 
     private NavMeshAgent _agent;
 
-    private IEnumerator Start()
+    private void Start()
     {
+        GameHandler.Instance.OnStartGame.AddListener(StartGame);
+
+
+        if (!GameHandler.Instance.PlayerSet)
+            GameHandler.Instance.OnPlayerChange += InitializeRamen;
+        else
+            InitializeRamen(_RamenEnemy);  
+    }
+
+    private void StartGame()
+    {
+        _agent.SetDestination(_Player.position);
+        _active = true;
+    }
+
+    private void InitializeRamen(PlayerTag player)
+    {
+        _RamenEnemy = player;
         _agent = GetComponent<NavMeshAgent>();
         _Player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        SpeedupRate = SpeedupRate /2;
+
+        SpeedupRate = SpeedupRate / 2;
         _agent.speed = RamenFollowSpeed;
+        GameHandler.Instance.UpdateSpeed(_RamenEnemy, RamenFollowSpeed);
 
         if (_RamenEnemy == PlayerTag.Player1)
-            CollectablesHandler.Instance.OnPlayer1SpeedChange += ChangeSpeed;
+            GameHandler.Instance.OnPlayer1Speed += ChangeSpeed;
         else if (_RamenEnemy == PlayerTag.Player2)
-            CollectablesHandler.Instance.OnPlayer2SpeedChange += ChangeSpeed;
-
-        yield return new WaitForSeconds(_StartingDelay);        
-        _agent.SetDestination(_Player.position);
-
-        _active = true;
+            GameHandler.Instance.OnPlayer2Speed += ChangeSpeed;
     }
 
     private void ChangeSpeed(float amount)
     {
-        _agent.speed += amount;
+        _agent.speed = amount;
     }
 
     private void LateUpdate()
