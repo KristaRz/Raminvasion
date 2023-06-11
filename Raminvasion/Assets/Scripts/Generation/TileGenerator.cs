@@ -98,6 +98,32 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.localScale = Vector3.one * _TileWidth;
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
+            if(RessourceGenerator.Instance.CheckIfFood(lines[j])){
+                newTile.GetComponent<FoodDistribution>().PlaceFood();
+            } 
+            
+
+            //just for visual debugging
+                Transform childTransform = newTile.transform.Find("TileGround");
+
+                if (childTransform != null)
+                {
+                GameObject childGameObject = childTransform.gameObject;
+                Renderer childRenderer = childGameObject.GetComponent<Renderer>();
+                if (childRenderer != null)
+                {
+                    if(lines[j].Area==TileArea.MainPath){
+                    childRenderer.material.color = Color.green; 
+                    }
+                    else if(lines[j].Area==TileArea.SecondaryPath){
+                    childRenderer.material.color = Color.blue; 
+                    }
+                    else if(lines[j].Area==TileArea.DeadEnd){
+                    childRenderer.material.color = Color.red; 
+                    }
+                }
+                }
+
 
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
@@ -181,6 +207,9 @@ public class TileGenerator : MonoBehaviour
         //Debug.Log("Finished maze generation in tile spawner"+ newMazeTiles.Count);
 
         _nextBatch = new();
+
+        //area surface calc && ressource distribution maybe here?
+
         _nextBatch = ChopTileListIntoRows(newMazeTiles);
 
         List<TileInformation> toReturn = _nextBatch[0];
