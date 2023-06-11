@@ -746,6 +746,7 @@ GameObject:
   m_Component:
   - component: {fileID: 603031105}
   - component: {fileID: 603031104}
+  - component: {fileID: 603031106}
   m_Layer: 0
   m_Name: -MazeGenerator-
   m_TagString: Untagged
@@ -773,7 +774,7 @@ MonoBehaviour:
   gridSizeZ: 20
   delayBetweenSteps: 0.1
   regenerateKey: 114
-  _TurnOnBuggyDeadends: 1
+  _TurnOnBuggyDeadends: 0
   _DeadendIterations: 31
   _DeadendLength: 3
 --- !u!4 &603031105
@@ -791,6 +792,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &603031106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603031103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1347abdd2b1e3c54388d6b4b40b0497c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  difficultyMode: 1
+  foodTiles: []
 --- !u!1001 &1148868843
 PrefabInstance:
   m_ObjectHideFlags: 0
