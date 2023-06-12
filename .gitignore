@@ -71,3 +71,5 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /Raminvasion/[Aa]ssets/[Ss]treamingAssets/aa.meta
 /Raminvasion/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+Raminvasion/.vscode/settings.json
