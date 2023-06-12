@@ -6,6 +6,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using TMPro;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -14,6 +15,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private void Awake() => Instance = this;
 
     private string _roomName = "DefaultRoom";
+    [SerializeField] private TextMeshProUGUI _DebugText;
 
     public void Start()
     {
@@ -25,6 +27,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private void ConnectToServer()
     {
         PhotonNetwork.ConnectUsingSettings();
+        _DebugText.SetText("Trying to connect...");
         Debug.Log("Trying to connect to server...");
     }
 
@@ -32,8 +35,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
+        _DebugText.SetText("Connected.");
         Debug.Log("Connected to server.");
         base.OnConnectedToMaster();
+    }
+
+    public void SetRoomName(string roomName)
+    {
+        _roomName = roomName;
     }
 
 }

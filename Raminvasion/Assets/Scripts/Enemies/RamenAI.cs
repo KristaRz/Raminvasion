@@ -1,36 +1,43 @@
 // Created 15.05.2023 by Krista Plagemann //
 // Makes the enemy ramen follow the player using navmesh //
 
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 
-public class RamenAI : MonoBehaviour
+public class RamenAI : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerTag _RamenEnemy;
 
     [SerializeField] private Transform _Player;
     [SerializeField] private float _StartingDelay;
     [SerializeField, Tooltip("Rate at which the ramen gets faster.")] private float SpeedupRate = 1;
-
     [SerializeField] private float RamenFollowSpeed = 8;
 
+    [SerializeField] private float _PlayerUpdateRate = 2f;
+    private float _speedCollected = 0;
 
     public bool _active = false;
 
     private NavMeshAgent _agent;
 
-    private void Start()
+    private IEnumerator Start()
     {
-        GameHandler.Instance.OnStartGame.AddListener(StartGame);
+        yield return new WaitForSeconds(_StartingDelay);
 
+        //GameHandler.Instance.OnStartGame.AddListener(StartGame);
 
         if (!GameHandler.Instance.PlayerSet)
             GameHandler.Instance.OnPlayerChange += InitializeRamen;
         else
-            InitializeRamen(_RamenEnemy);  
+            InitializeRamen(_RamenEnemy);
+
+        _agent.SetDestination(_Player.position);
+        _active = true;
     }
 
     private void StartGame()
@@ -64,8 +71,17 @@ public class RamenAI : MonoBehaviour
     {
         if (_active)
         {
-            _agent.speed += SpeedupRate * Time.deltaTime;
+            float speedUP = SpeedupRate * Time.deltaTime;
+            //_agent.speed += speedUP;
             _agent.SetDestination(_Player.position);
+            _speedCollected += speedUP;
+            if(_speedCollected >= _PlayerUpdateRate)
+            {
+                CollectablesHandler.Instance.UpdateRamenSpeed(_RamenEnemy, (int)_speedCollected);
+                GameHandler.Instance.UpdateSpeed(_RamenEnemy, (int)_speedCollected);
+                _speedCollected = 0;
+            }
         }
     }
+
 }

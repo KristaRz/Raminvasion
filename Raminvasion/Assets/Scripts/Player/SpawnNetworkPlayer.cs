@@ -12,26 +12,24 @@ public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _Player1Prefab;
     [SerializeField] private GameObject _Player2Prefab;
 
-    public override void OnJoinedRoom()
+    private void Start()
     {
-        base.OnJoinedRoom();
+        GameHandler.Instance.OnStartGame.AddListener(OnGameStarted);
+    }
 
+    public void OnGameStarted()
+    {
         // When we join a room, we spawn an Avatar for ourselves(the NetworkPlayer). This will be visible to others then since we instantiate it in the network.
 
-
-        if (PhotonNetwork.CurrentRoom.Players.Count == 1)
+        if (GameHandler.Instance.currentPlayer == PlayerTag.Player1)
         {
             //_Player1Prefab = PhotonNetwork.Instantiate("NetPlayer1", transform.position, transform.rotation);
             Instantiate(_Player1Prefab, transform.position, transform.rotation);
-            LogEventMessage.Instance.LogText("Joined as Player 1.");
-            GameHandler.Instance.SetPlayer(PlayerTag.Player1);
         }
         else
         {
             //_Player2Prefab = PhotonNetwork.Instantiate("NetPlayer2", transform.position, transform.rotation);
             Instantiate(_Player2Prefab, transform.position, transform.rotation);
-            LogEventMessage.Instance.LogText("Joined as Player 2.");
-            GameHandler.Instance.SetPlayer(PlayerTag.Player2);
         }
 
         _MenuCamera.SetActive(false);
@@ -42,6 +40,6 @@ public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
         base.OnLeftRoom();
         // When we leave the room again, we also destroy our avatar on the network
         //PhotonNetwork.Destroy(_spawnedPlayerPrefab);
-        _MenuCamera.SetActive(true);
+        //_MenuCamera.SetActive(true);
     }
 }

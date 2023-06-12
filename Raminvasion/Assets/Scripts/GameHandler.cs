@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -37,7 +38,7 @@ public class GameHandler : MonoBehaviour
 
     public void StartGame()
     {
-        OnStartGame.Invoke();
+        OnStartGame?.Invoke();
     }
 
     #endregion

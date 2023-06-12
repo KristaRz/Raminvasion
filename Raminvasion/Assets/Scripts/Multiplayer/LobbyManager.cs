@@ -15,6 +15,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _RoomItemPrefab;
     [SerializeField] private GameObject _ContentPlaceholder;
     [SerializeField] private GameObject _MenuCanvas;
+    [SerializeField] private GameObject _SelectionCanvas;
+    [SerializeField] private GameObject _CreateCanvas;
+    [SerializeField] private GameObject _JoinCanvas;
+    [SerializeField] private GameObject _RoomLobbyCanvas;
 
     private List<RoomListItem> _currentRooms = new List<RoomListItem>();
 
@@ -31,6 +35,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public void SetNewRoomAndJoin(string roomName)
     {
         _roomName = roomName;
+        NetworkManager.Instance.SetRoomName(roomName);
 
         // We make a new set of room options for the room we want to open. You can assign these with a 
         RoomOptions roomOptions = new()
@@ -42,13 +47,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         // When we connect to the server we create or join "Room 1".
         PhotonNetwork.CreateRoom(_roomName, roomOptions);
 
-        _MenuCanvas.SetActive(false);
+        _SelectionCanvas.SetActive(false);
+        _CreateCanvas.SetActive(false);
+
+        _RoomLobbyCanvas.SetActive(true);
+        _RoomLobbyCanvas.GetComponent<RoomPlayerSelection>().SetRoom(roomName);
     }
 
     public void JoinExistingRoom(string roomName)
     {
         Debug.Log(roomName);
         _roomName = roomName;
+        NetworkManager.Instance.SetRoomName(roomName);
         if (PhotonNetwork.InLobby)
         {
             PhotonNetwork.LeaveLobby();
@@ -56,7 +66,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         // Join the room with the name _roomName.
         PhotonNetwork.JoinRoom(_roomName);
 
-        _MenuCanvas.SetActive(false);
+        _SelectionCanvas.SetActive(false);
+        _JoinCanvas.SetActive(false);
+
+        _RoomLobbyCanvas.SetActive(true);
+        _RoomLobbyCanvas.GetComponent<RoomPlayerSelection>().SetRoom(roomName);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -69,22 +83,20 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.LogWarning("Join room failed bcs: " + message);
     }
 
-
-
-    public override void OnJoinedRoom()
+    public void StartGame(PlayerTag playerTag)
     {
-        Debug.Log("Joined a room.");
-        if (PhotonNetwork.CurrentRoom.Players.Count == 1)
+        GameHandler.Instance.SetPlayer(playerTag);
+        if (playerTag == PlayerTag.Player1)
         {
             LogEventMessage.Instance.LogText("Joined as Player 1.");
-            GameHandler.Instance.SetPlayer(PlayerTag.Player1);
         }
         else
         {
             LogEventMessage.Instance.LogText("Joined as Player 2.");
-            GameHandler.Instance.SetPlayer(PlayerTag.Player2);
         }
-        base.OnJoinedRoom();
+        _RoomLobbyCanvas.SetActive(false);
+        _MenuCanvas.SetActive(false);
+        GameHandler.Instance.StartGame();
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -111,5 +123,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             newRoom.SetRoomName(room.Name);
             _currentRooms.Add(newRoom);
         }
+    }
+
+
+    ///////////////////////////////////
+    //////////////DEBUG////////////////
+    ///////////////////////////////////
+
+    public void StartDebugGame()
+    {
+        RoomOptions roomOptions = new()
+        {
+            MaxPlayers = 2,    // hover over names to see explanations
+            IsVisible = true,
+            IsOpen = true
+        };
+        // When we connect to the server we create or join "Room 1".
+        PhotonNetwork.CreateRoom("DebugRoom", roomOptions);
+
+        _MenuCanvas.SetActive(false);
+        GameHandler.Instance.SetPlayer(PlayerTag.Player1);
+        GameHandler.Instance.StartGame();
     }
 }

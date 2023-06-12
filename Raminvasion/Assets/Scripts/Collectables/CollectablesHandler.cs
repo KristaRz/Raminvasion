@@ -7,7 +7,7 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
 {
     #region Singleton
 
-    public static CollectablesHandler Instance {  get; private set; }
+    public static CollectablesHandler Instance { get; private set; }
 
     private void Awake()
     {
@@ -52,6 +52,18 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
     private void ReceiveSpeed(PlayerTag player, float speed)
     {
         SpreadSpeeed(player, speed);
-        Debug.Log("Received speed from: " + player + " " + speed);
     }
+
+
+    public void UpdateRamenSpeed(PlayerTag playerTag, int speedChange)
+    {
+        photonView.RPC("RamenSpeedTransfer", RpcTarget.Others, playerTag, speedChange);
+    }
+
+    [PunRPC]
+    private void RamenSpeedTransfer(PlayerTag player, float speed)
+    {
+        GameHandler.Instance.UpdateSpeed(player, speed);
+    }
+
 }

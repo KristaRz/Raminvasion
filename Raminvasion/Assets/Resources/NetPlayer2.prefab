@@ -689,8 +689,8 @@ GameObject:
   - component: {fileID: 2941082023639402360}
   - component: {fileID: 2941082023639402256}
   - component: {fileID: 2941082023639402386}
-  - component: {fileID: 2941082023639401713}
   - component: {fileID: 2941082023639402409}
+  - component: {fileID: 2078515063559689038}
   m_Layer: 0
   m_Name: Ramen1
   m_TagString: Untagged
@@ -777,24 +777,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2941082023639401713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2941082023639400789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 725b6072a29cc624cb76187836b9534d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _RamenEnemy: 0
-  _Player: {fileID: 3937639212476647255}
-  _StartingDelay: 9.63
-  SpeedupRate: 1
-  RamenFollowSpeed: 10
-  _active: 0
 --- !u!195 &2941082023639402409
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -817,6 +799,25 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &2078515063559689038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2941082023639400789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 725b6072a29cc624cb76187836b9534d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _RamenEnemy: 0
+  _Player: {fileID: 3937639212476647255}
+  _StartingDelay: 2
+  SpeedupRate: 1
+  RamenFollowSpeed: 10
+  _PlayerUpdateRate: 2
+  _active: 0
 --- !u!1 &2941082023639400791
 GameObject:
   m_ObjectHideFlags: 0
@@ -1054,7 +1055,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2941082023639400582}
-  - component: {fileID: 2941082023639401651}
   m_Layer: 0
   m_Name: NetPlayer2
   m_TagString: Untagged
@@ -1085,28 +1085,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2941082023639401651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2941082023639400839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &3586781171741399842
 GameObject:
   m_ObjectHideFlags: 0
@@ -2321,6 +2299,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 7943114043437001945}
+    - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
+      propertyPath: CameraTurnSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8241116982632989140, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
       propertyPath: m_Avatar
       value: 
