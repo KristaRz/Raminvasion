@@ -90,7 +90,7 @@ public class TileGenerator : MonoBehaviour
     private void GenerateSingleRow(List<TileInformation> lines)
     {
         _rowsGeneratedIndex++;
-        //Debug.Log(_rowsGeneratedIndex);
+        
         for (int j = 0; j < lines.Count; j++)
         {
             GameObject newTile = ObjectPool.Instance.GetTile();
@@ -98,12 +98,9 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.localScale = Vector3.one * _TileWidth;
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
-            if(RessourceGenerator.Instance.CheckIfFood(lines[j])){
-                newTile.GetComponent<FoodDistribution>().PlaceFood();
-            } 
             
 
-            //just for visual debugging
+                //just for visual debugging
                 Transform childTransform = newTile.transform.Find("TileGround");
 
                 if (childTransform != null)
@@ -127,6 +124,7 @@ public class TileGenerator : MonoBehaviour
 
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
+            RessourceGenerator.Instance.HandleTileQueue(lines[j]);
         }
 
         OnFirstLaneGenerated?.Invoke();  // this is empty after the first one so maybe remove later with bool or smth

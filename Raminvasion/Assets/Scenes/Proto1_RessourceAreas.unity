@@ -774,7 +774,7 @@ MonoBehaviour:
   gridSizeZ: 20
   delayBetweenSteps: 0.1
   regenerateKey: 114
-  _TurnOnBuggyDeadends: 0
+  _TurnOnBuggyDeadends: 1
   _DeadendIterations: 31
   _DeadendLength: 3
 --- !u!4 &603031105
@@ -804,8 +804,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1347abdd2b1e3c54388d6b4b40b0497c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficultyMode: 1
+  difficultyMode: 0
   foodTiles: []
+  toPopulateTilesAmount: 5
 --- !u!1001 &1148868843
 PrefabInstance:
   m_ObjectHideFlags: 0
