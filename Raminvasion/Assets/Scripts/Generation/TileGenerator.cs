@@ -33,9 +33,9 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private Transform _VacuumRamenToTrack;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
 
-    [SerializeField] private int _LaneColumns = 20;
-    [SerializeField] private int _LaneRows = 20;
-    [SerializeField] private int _TileWidth = 20;
+    public int _LaneColumns = 20;
+    public int _LaneRows = 20;
+    public int _TileWidth = 20;
 
     private float _offset;
     private int _rowsGeneratedIndex = 0;

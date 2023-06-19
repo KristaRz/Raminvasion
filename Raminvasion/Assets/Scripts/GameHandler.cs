@@ -28,6 +28,7 @@ public class GameHandler : MonoBehaviour
     public event Action<PlayerTag> OnPlayerChange = delegate { };
 
     public UnityEvent OnStartGame;
+    public UnityEvent OnPlayerSpawned;
 
     public void SetPlayer(PlayerTag player)
     {
@@ -40,6 +41,8 @@ public class GameHandler : MonoBehaviour
     {
         OnStartGame?.Invoke();
     }
+
+    public void PlayerSpawned() { OnPlayerSpawned?.Invoke(); }
 
     #endregion
 
