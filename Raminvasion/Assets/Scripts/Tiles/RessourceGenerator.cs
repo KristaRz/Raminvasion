@@ -37,7 +37,6 @@ public class RessourceGenerator : MonoBehaviour
     }
 
     private void Start() {
-        // MazeGenerator.Instance.OnMazeGenerated += RessourcePlanning;
         tileQueue=new();
     }
 
@@ -69,19 +68,20 @@ public class RessourceGenerator : MonoBehaviour
         secondaryPathTiles=givenList.FindAll(tile=> tile.Area==TileArea.SecondaryPath);
         deadEndTiles=givenList.FindAll(tile=> tile.Area==TileArea.DeadEnd);
 
+        if(mainPathTiles.Count>=0){
+          DistributeFood(mainPathTiles);  
+        }
+        else if(secondaryPathTiles.Count>=0){
+          DistributeFood(secondaryPathTiles);  
+        }
+        if(secondaryPathTiles.Count>=0){
+          DistributeFood(deadEndTiles);  
+        }
         
-        foodTiles=DistributeFood(mainPathTiles);
         InstantiateOnTiles(foodTiles);
 
     }
 
-    // public bool CheckIfFood(TileInformation tile){
-    //     //needs to be rewritten
-    //     if(foodTiles.Contains(tile)){
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
     private void InstantiateOnTiles(Dictionary<TileInformation,int> foodTiles){
         foreach (var item in foodTiles)
@@ -93,49 +93,63 @@ public class RessourceGenerator : MonoBehaviour
         }
     }
 
-    private Dictionary<TileInformation,int> DistributeFood(List<TileInformation> pathTiles){
+    private void DistributeFood(List<TileInformation> pathTiles){
+        if(pathTiles!=null){
 
-        List<TileInformation> tilesWithFood=new ();
-        Dictionary<TileInformation,int> foodTilesAmount=new();
+            //there should be extern function as rulebook for different cases
 
-        //for secondary path it could be flat 60-70 and deadend like a drop of 2-3
-        float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
+            float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
 
-        int foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
+            if(pathTiles[0].Area==TileArea.SecondaryPath){
+                //for secondary path it could be flat 60-70
+                foodPercentage=70;
+            }
 
-        foreach(TileInformation item in pathTiles){
-            foodTilesAmount.Add(item,0);
-        }
-        
-        int index = 0;
-        while (foodAmount >=0 && index < 1000)
-        {
-            int randomIndex=Mathf.RoundToInt(Random.Range(0,pathTiles.Count-1));
+            int foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
+
+            if(pathTiles[0].Area==TileArea.DeadEnd){
+                //for deadEnd drop 2-3
+                foodAmount=3;
+            }
+
+            //building Dictionary for tiles and food
+            Dictionary<TileInformation,int> foodTilesAmount=new();
+
+            foreach(TileInformation item in pathTiles){
+                foodTilesAmount.Add(item,0);
+            }
             
-            foodTilesAmount[pathTiles[randomIndex]]++;
+            int index = 0;
+            while (foodAmount >=0 && index < 1000)
+            {
+                int randomIndex=Mathf.RoundToInt(Random.Range(0,pathTiles.Count-1));
+                
+                foodTilesAmount[pathTiles[randomIndex]]++;
 
-            foodAmount--;
-   
+                foodAmount--;
+    
+            }
+
+            foreach (var item in foodTilesAmount)
+            {
+                foodTiles.Add(item.Key,item.Value);
+            }
+            }
         }
 
-        Debug.Log(foodTilesAmount);
-
-        return foodTilesAmount;
-    }
-
-    private int GetFoodPercentage(DifficultyMode difficulty)
-    {
-        switch (difficulty)
+        private int GetFoodPercentage(DifficultyMode difficulty)
         {
-            case DifficultyMode.Easy:
-                return 40; 
-            case DifficultyMode.Medium:
-                return 20; 
-            case DifficultyMode.Hard:
-                return 10; 
-            default:
-                return 0; 
-        }
+            switch (difficulty)
+            {
+                case DifficultyMode.Easy:
+                    return 40; 
+                case DifficultyMode.Medium:
+                    return 20; 
+                case DifficultyMode.Hard:
+                    return 10; 
+                default:
+                    return 0; 
+            }
     }
 }
     
