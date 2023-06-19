@@ -231,7 +231,7 @@ public class MazeGenerator : MonoBehaviour
         {
 
             newTileDirection = 1;
-            lastTile = new TileInformation(startColumn, 0, newTileDirection, TileDirection.Vertical);  // create a tile at our current standpoint
+            lastTile = new TileInformation(startColumn, 0, newTileDirection, TileDirection.Vertical,TileArea.MainPath);  // create a tile at our current standpoint
         }
         else
         {
@@ -261,9 +261,9 @@ public class MazeGenerator : MonoBehaviour
                 randomAdjacentAmount--;
                 TileInformation newTileInfo;
                 if (randomAdjacentAmount <= 0)
-                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 2, TileDirection.Horizontal); // add horizontal if end
+                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 2, TileDirection.Horizontal, TileArea.MainPath); // add horizontal if end
                 else
-                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical); // else add vertical again
+                    newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical,TileArea.MainPath); // else add vertical again
                 continuousMazeDirections.Add(newTileInfo);
             }
             else  // if last was horizontal
@@ -275,7 +275,7 @@ public class MazeGenerator : MonoBehaviour
                 randomAdjacentAmount = UnityEngine.Random.Range(minAdjacentTiles - 1, maxAdjacentTiles);
                 _adjacentTilesLeft = randomAdjacentAmount-1;
 
-                TileInformation newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical); // else add vertical again
+                TileInformation newTileInfo = new TileInformation(lastTile.IndexX, lastTile.IndexZ + 1, 1, TileDirection.Vertical,TileArea.MainPath); // else add vertical again
                 continuousMazeDirections.Add(newTileInfo);
             }
 
@@ -324,7 +324,7 @@ public class MazeGenerator : MonoBehaviour
                 newTileDirectionEnum = TileDirection.Horizontal;
             }
             TileInformation newTileInfo = new TileInformation
-                (lastTile.IndexX + randomTileDirection, lastTile.IndexZ, newTileDirection, newTileDirectionEnum);
+                (lastTile.IndexX + randomTileDirection, lastTile.IndexZ, newTileDirection, newTileDirectionEnum,TileArea.MainPath);
 
             continuousMazeDirections.Add(newTileInfo);
             lastTile = newTileInfo;
@@ -374,8 +374,8 @@ public class MazeGenerator : MonoBehaviour
                     }
                     if (amountAccepted >= deadEndLength - 1)
                     {
-                        List<TileInformation> declaredTile = MazeTileDeclaration.DeclareDeadEndTypes(singleDeadend, continuousMazeDirections);
-                        continuousMazeDirections = declaredTile;
+                        List<TileInformation> declaredTiles = MazeTileDeclaration.DeclareDeadEndTypes(singleDeadend, continuousMazeDirections);
+                        continuousMazeDirections = declaredTiles;
                     }
                 }
             }         
@@ -402,7 +402,7 @@ public class MazeGenerator : MonoBehaviour
                     if (CheckIfTileFree(randomStartpoint.IndexX - 1, randomStartpoint.IndexZ))
                     {
                         randomStartpoint.TileDirectionIndex = 2;
-                        return new TileInformation(randomStartpoint.IndexX - 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal);
+                        return new TileInformation(randomStartpoint.IndexX - 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal,TileArea.SecondaryPath);
                     }
                     break;
                 /// Foward ///
@@ -410,7 +410,7 @@ public class MazeGenerator : MonoBehaviour
                     if (CheckIfTileFree(randomStartpoint.IndexX, randomStartpoint.IndexZ + 1))
                     {
                         randomStartpoint.TileDirectionIndex = 1;
-                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ + 1, 1, TileDirection.Vertical);
+                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ + 1, 1, TileDirection.Vertical,TileArea.SecondaryPath);
                     }
                     break;
                 /// Right ///
@@ -418,7 +418,7 @@ public class MazeGenerator : MonoBehaviour
                     if (CheckIfTileFree(randomStartpoint.IndexX + 1, randomStartpoint.IndexZ))
                     {
                         randomStartpoint.TileDirectionIndex = 2;
-                        return new TileInformation(randomStartpoint.IndexX + 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal);
+                        return new TileInformation(randomStartpoint.IndexX + 1, randomStartpoint.IndexZ, 2, TileDirection.Horizontal,TileArea.SecondaryPath);
                     }
                     break;
                 /// Back ///
@@ -426,13 +426,13 @@ public class MazeGenerator : MonoBehaviour
                     if (CheckIfTileFree(randomStartpoint.IndexX, randomStartpoint.IndexZ - 1))
                     {
                         randomStartpoint.TileDirectionIndex = 1;
-                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ - 1, 1, TileDirection.Vertical);
+                        return new TileInformation(randomStartpoint.IndexX, randomStartpoint.IndexZ - 1, 1, TileDirection.Vertical,TileArea.SecondaryPath);
                     }
                     break;
 
             }
         }
-        return new TileInformation(-1, -1, 0, TileDirection.Vertical);
+        return new TileInformation(-1, -1, 0, TileDirection.Vertical,TileArea.MainPath);
     }
 
     private bool CheckIfTileFree(float indexX, float indexY)
@@ -497,13 +497,19 @@ public class TileInformation
     /// The GameObject when instantiated.
     /// </summary>
     public GameObject TileObject;
+    /// <summary>
+    /// Area of the Maze the Tile is part of
+    /// </summary>
+    public TileArea Area;
 
 
-    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction)
+    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction, TileArea area)
     {
         IndexX = indexX;
         IndexZ = indexZ;
         TileDirectionIndex = tileDirectionIndex;
-        Direction = direction;       
+        Direction = direction; 
+        Area=area;      
+
     }
 }

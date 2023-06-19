@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public enum TileArea{
+    MainPath,
+    SecondaryPath,
+    DeadEnd
+}
 
 public enum TileDirection{ 
     Vertical, Horizontal,
@@ -110,9 +115,9 @@ public class TileInfo : MonoBehaviour
             this.gameObject.transform.eulerAngles=new Vector3(0,180,0);
             break;
 
-            default:
-            Debug.Log("Do nothing");;
-            break;
+            // default:
+            // Debug.Log("Do nothing");
+            // break;
         }
     }
 

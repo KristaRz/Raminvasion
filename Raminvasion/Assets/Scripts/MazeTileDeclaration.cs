@@ -77,7 +77,7 @@ public static class MazeTileDeclaration
                 previousTile = lastTile;
             }
             else
-                previousTile = new TileInformation(currentTile.IndexX, currentTile.IndexZ - 1, currentTile.TileDirectionIndex, currentTile.Direction); // i think this is for subsequent mazes
+                previousTile = new TileInformation(currentTile.IndexX, currentTile.IndexZ - 1, currentTile.TileDirectionIndex, currentTile.Direction, currentTile.Area); // i think this is for subsequent mazes
 
             // The last tile gets calculated and then returned
             if (i == continousMaze.Count - 1)
@@ -169,6 +169,9 @@ public static class MazeTileDeclaration
                     currentTile.Direction = TileDirection.LeftDead;
                 else if (previousTile.IndexZ > currentTile.IndexZ)    // if IN is below
                     currentTile.Direction = TileDirection.FrontDead;
+                
+                //better for it to be in MazeGenerator i think
+                currentTile.Area=TileArea.DeadEnd;
             }
             else // then the rest of the tiles
             {
