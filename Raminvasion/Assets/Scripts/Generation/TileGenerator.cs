@@ -37,6 +37,8 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private int _LaneRows = 20;
     [SerializeField] private int _TileWidth = 20;
 
+    [SerializeField] private bool areaVisualDebug;
+
     private float _offset;
     private int _rowsGeneratedIndex = 0;
     private int _lastRowActive = 0;
@@ -98,7 +100,31 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.localScale = Vector3.one * _TileWidth;
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
+
+            if(areaVisualDebug){
+                //just for visual debugging
+                Transform childTransform = newTile.transform.Find("TileGround");
+
+                if (childTransform != null)
+                {
+                GameObject childGameObject = childTransform.gameObject;
+                Renderer childRenderer = childGameObject.GetComponent<Renderer>();
+                if (childRenderer != null)
+                {
+                    if(lines[j].Area==TileArea.MainPath){
+                    childRenderer.material.color = Color.green; 
+                    }
+                    else if(lines[j].Area==TileArea.SecondaryPath){
+                    childRenderer.material.color = Color.blue; 
+                    }
+                    else if(lines[j].Area==TileArea.DeadEnd){
+                    childRenderer.material.color = Color.red; 
+                    }
+                }
+                }
+            }
             
+
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
             RessourceGenerator.Instance.HandleTileQueue(lines[j]);

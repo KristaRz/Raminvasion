@@ -773,7 +773,7 @@ MonoBehaviour:
   gridSizeZ: 20
   delayBetweenSteps: 0.1
   regenerateKey: 114
-  _TurnOnBuggyDeadends: 0
+  _TurnOnBuggyDeadends: 1
   _DeadendIterations: 31
   _DeadendLength: 3
 --- !u!4 &603031105
@@ -931,6 +931,7 @@ MonoBehaviour:
   _LaneColumns: 20
   _LaneRows: 20
   _TileWidth: 20
+  areaVisualDebug: 0
   _navMeshSurface: {fileID: 458392849}
   OnFirstLaneGenerated:
     m_PersistentCalls:
@@ -980,7 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toPopulateTiles: []
-  difficultyMode: 0
+  difficultyMode: 1
   toPopulateTilesAmount: 5
 --- !u!4 &2135091741
 Transform:
