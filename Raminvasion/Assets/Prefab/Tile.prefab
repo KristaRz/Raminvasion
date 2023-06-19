@@ -218,8 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileGround: {fileID: 2333384927113961952}
   foodPrefab: {fileID: 1500203809658142, guid: 67791c4ce16c99442ac667f6e8c08792, type: 3}
-  foodRadius: 3.5
-  foodAmount: 2
+  foodRadius: 0.5
 --- !u!65 &7853514773416389363
 BoxCollider:
   m_ObjectHideFlags: 0
