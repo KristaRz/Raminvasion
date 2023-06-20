@@ -42,8 +42,8 @@ public class MazeGenerator : MonoBehaviour
     public event Action<List<TileInformation>> OnMazeGenerated = delegate { };
     private List<TileInformation> continuousMazeDirections = new();
 
-    [SerializeField] private int _MinAdjacentTiles = 3;
-    [SerializeField] private int _MaxAdjacentTiles = 5;
+    private int _minAdjacentTiles = 3;
+    private int _maxAdjacentTiles = 5;
 
     private int[,] mazeGrid;
 
@@ -59,11 +59,13 @@ public class MazeGenerator : MonoBehaviour
     private int _lastTileX;
     private bool _firstMazeGenerated = false;
 
-    public void GenerateMazeBlueprint(int columns, int rows, int tileSize, int numDeadEnds, int numExpansionTiles)
+    public void GenerateMazeBlueprint(int columns, int rows, int tileSize, int minAdjacentTiles, int maxAdjacentTiles, int numDeadEnds, int numExpansionTiles)
     {       
         _tileSize = tileSize;
         gridSizeX = columns;
         gridSizeZ = rows;
+        _minAdjacentTiles = minAdjacentTiles;
+        _maxAdjacentTiles = maxAdjacentTiles;
         _numDeadEnds = numDeadEnds;
         _numExpansionTiles = numExpansionTiles;
 
@@ -90,7 +92,7 @@ public class MazeGenerator : MonoBehaviour
 
         while (currentRow < gridSizeZ - 1)
         {
-            int numAdjacentTiles = UnityEngine.Random.Range(_MinAdjacentTiles, _MaxAdjacentTiles + 1);
+            int numAdjacentTiles = UnityEngine.Random.Range(_minAdjacentTiles, _maxAdjacentTiles + 1);
 
             if (!firstPathGenerated)
             {
