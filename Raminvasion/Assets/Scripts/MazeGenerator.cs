@@ -31,6 +31,7 @@ public class MazeGenerator : MonoBehaviour
     public static MazeGenerator Instance { get; private set; }
     private void Awake()
     {
+        transform.parent = null;
         if (Instance == null)
             Instance = this;
         else
@@ -729,13 +730,11 @@ public class TileInformation
     public TileArea Area;
 
 
-    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction, TileArea area)
+    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction)
     {
         IndexX = indexX;
         IndexZ = indexZ;
         TileDirectionIndex = tileDirectionIndex;
         Direction = direction; 
-        Area=area;      
-
     }
 }
