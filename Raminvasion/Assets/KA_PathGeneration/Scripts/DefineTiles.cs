@@ -2,15 +2,15 @@ using System.Collections;
 using UnityEngine;
 using Unity.AI.Navigation;
 
-public class DefineTiles : MonoBehaviour
+public static class DefineTiles 
 {
 
-    public void GenerateTiles(int[,] mazeGrid, int gridSizeX, int gridSizeZ, float tileSize)
+    public static void GenerateTiles(int[,] mazeGrid, int gridSizeX, int gridSizeZ, int tileSize)
     {
         PositionTiles(mazeGrid, gridSizeX, gridSizeZ, tileSize);
     }
 
-    private void PositionTiles(int[,] mazeGrid, int gridSizeX, int gridSizeZ, float tileSize)
+    private static void PositionTiles(int[,] mazeGrid, int gridSizeX, int gridSizeZ, int tileSize)
     {
         for (int row = 0; row < gridSizeZ; row++)
         {

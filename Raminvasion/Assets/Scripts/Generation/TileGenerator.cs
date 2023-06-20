@@ -37,6 +37,10 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private int _LaneRows = 20;
     [SerializeField] private int _TileWidth = 20;
 
+    // Dead Ends
+    [SerializeField] private int _numDeadEnds = 10;
+    [SerializeField] private int _numExpansionTiles = 1;
+
     private float _offset;
     private int _rowsGeneratedIndex = 0;
     private int _lastRowActive = 0;
@@ -98,7 +102,6 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.localScale = Vector3.one * _TileWidth;
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
-
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
         }
@@ -112,8 +115,8 @@ public class TileGenerator : MonoBehaviour
     {
         if (_nextBatch.Count <= 0)
         {
-            //Debug.Log("Getting new line");
-            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth);
+            //Debug.Log("Getting new maze");
+            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth, _numDeadEnds, _numExpansionTiles);
         }
         else
         {
@@ -165,7 +168,7 @@ public class TileGenerator : MonoBehaviour
         {
             List<TileInformation> listToFill = new();
             foreach(var tile in givenTiles)
-                if(tile.IndexZ-_rowsGeneratedIndex == i)
+                if(tile.IndexZ == i)
                     listToFill.Add(tile);
             foreach(var removeTile in listToFill)
                 givenTiles.Remove(removeTile);

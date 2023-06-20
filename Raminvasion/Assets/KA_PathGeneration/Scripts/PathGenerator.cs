@@ -160,11 +160,11 @@ public class PathGenerator : MonoBehaviour
             }
         }
 
-        DefineTiles defineTiles = GetComponent<DefineTiles>();
-        if (defineTiles != null)
-        {
-            defineTiles.GenerateTiles( mazeGrid, gridSizeX, gridSizeZ, tileSize);
-        }
+        //DefineTiles defineTiles = GetComponent<DefineTiles>();
+       // if (defineTiles != null)
+        //{
+            //defineTiles.GenerateTiles( mazeGrid, gridSizeX, gridSizeZ, tileSize);
+        //}
 
     }
 
