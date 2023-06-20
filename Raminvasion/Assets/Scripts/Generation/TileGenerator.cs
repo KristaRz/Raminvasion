@@ -139,8 +139,8 @@ public class TileGenerator : MonoBehaviour
     {
         if (_nextBatch.Count <= 0)
         {
-            //Debug.Log("Getting new line");
-            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth);
+            //Debug.Log("Getting new maze");
+            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth, _numDeadEnds, _numExpansionTiles);
         }
         else
         {
@@ -192,7 +192,7 @@ public class TileGenerator : MonoBehaviour
         {
             List<TileInformation> listToFill = new();
             foreach(var tile in givenTiles)
-                if(tile.IndexZ-_rowsGeneratedIndex == i)
+                if(tile.IndexZ == i)
                     listToFill.Add(tile);
             foreach(var removeTile in listToFill)
                 givenTiles.Remove(removeTile);
