@@ -18,6 +18,7 @@ public class TileGenerator : MonoBehaviour
 
     private void Awake()
     {
+        transform.parent = null;
         if (Instance == null)
         {
             Instance = this;
@@ -33,9 +34,11 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private Transform _VacuumRamenToTrack;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
 
-    public int _LaneColumns = 20;
-    public int _LaneRows = 20;
-    public int _TileWidth = 20;
+    [SerializeField] private int _LaneColumns = 20;
+    [SerializeField] private int _LaneRows = 20;
+    [SerializeField] private int _TileWidth = 20;
+    [SerializeField] private int _numDeadEnds = 10;
+    [SerializeField] private int _numExpansionTiles = 1;
 
     [SerializeField] private bool areaVisualDebug;
 
@@ -107,8 +110,8 @@ public class TileGenerator : MonoBehaviour
 
                 if (childTransform != null)
                 {
-                GameObject childGameObject = childTransform.gameObject;
-                Renderer childRenderer = childGameObject.GetComponent<Renderer>();
+                //GameObject childGameObject = childTransform.gameObject;
+                Renderer childRenderer = childTransform.gameObject.GetComponent<Renderer>();
                 if (childRenderer != null)
                 {
                     if(lines[j].Area==TileArea.MainPath){
@@ -139,8 +142,8 @@ public class TileGenerator : MonoBehaviour
     {
         if (_nextBatch.Count <= 0)
         {
-            //Debug.Log("Getting new line");
-            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth);
+            //Debug.Log("Getting new maze");
+            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth, _numDeadEnds, _numExpansionTiles);
         }
         else
         {
@@ -192,7 +195,7 @@ public class TileGenerator : MonoBehaviour
         {
             List<TileInformation> listToFill = new();
             foreach(var tile in givenTiles)
-                if(tile.IndexZ-_rowsGeneratedIndex == i)
+                if(tile.IndexZ == i)
                     listToFill.Add(tile);
             foreach(var removeTile in listToFill)
                 givenTiles.Remove(removeTile);

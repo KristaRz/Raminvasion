@@ -31,11 +31,225 @@ public class MazeGenerator : MonoBehaviour
     public static MazeGenerator Instance { get; private set; }
     private void Awake()
     {
+        transform.parent = null;
         if (Instance == null)
             Instance = this;
         else
             Destroy(Instance);
     }
+
+
+    public event Action<List<TileInformation>> OnMazeGenerated = delegate { };
+    private List<TileInformation> continuousMazeDirections = new();
+
+    [SerializeField] private int _MinAdjacentTiles = 3;
+    [SerializeField] private int _MaxAdjacentTiles = 5;
+
+    private int[,] mazeGrid;
+
+    // Dead ends
+    //public int maxNumDeadEnds = 20;
+    private int _numDeadEnds = 10;
+    private int _numExpansionTiles = 1;
+
+    private int gridSizeX = 20;
+    private int gridSizeZ = 20;
+    private int _tileSize = 20;
+
+    private int _lastTileX;
+    private bool _firstMazeGenerated = false;
+
+    public void GenerateMazeBlueprint(int columns, int rows, int tileSize, int numDeadEnds, int numExpansionTiles)
+    {       
+        _tileSize = tileSize;
+        gridSizeX = columns;
+        gridSizeZ = rows;
+        _numDeadEnds = numDeadEnds;
+        _numExpansionTiles = numExpansionTiles;
+
+        mazeGrid = new int[gridSizeX, gridSizeZ];
+
+        // Deciding the first column position based on previous maze or in the center if first maze
+
+        int startColumn;
+        if (!_firstMazeGenerated)   // if this is first maze
+        {
+            startColumn = gridSizeX / 2;
+            _firstMazeGenerated = true;
+        }
+        else
+            startColumn = _lastTileX;
+
+        mazeGrid[startColumn, 0] = 1;
+
+        Vector2Int direction = Vector2Int.up;
+        int currentRow = 0;
+        int currentColumn = startColumn;
+
+        bool firstPathGenerated = false;
+
+        while (currentRow < gridSizeZ - 1)
+        {
+            int numAdjacentTiles = UnityEngine.Random.Range(_MinAdjacentTiles, _MaxAdjacentTiles + 1);
+
+            if (!firstPathGenerated)
+            {
+                // Set the direction to front for the first path
+                direction = Vector2Int.up;
+                firstPathGenerated = true;
+            }
+            else
+            {
+                if (direction == Vector2Int.up)
+                {
+                    if (currentColumn - numAdjacentTiles < 0)
+                        direction = Vector2Int.right;
+                    else if (currentColumn + numAdjacentTiles >= gridSizeX)
+                        direction = Vector2Int.left;
+                    else
+                        direction = UnityEngine.Random.value < 0.5f ? Vector2Int.left : Vector2Int.right;
+                }
+                else
+                {
+                    direction = Vector2Int.up;
+                }
+            }
+
+            for (int i = 0; i < numAdjacentTiles; i++)
+            {
+                int newRow = currentRow + direction.y;
+                int newColumn = currentColumn + direction.x;
+
+                if (newRow >= gridSizeZ - 1)
+                {
+                    int remainingRows = gridSizeZ - 1 - currentRow;
+                    numAdjacentTiles = Mathf.Min(numAdjacentTiles, remainingRows);
+                }
+
+                mazeGrid[newColumn, newRow] = 1;
+
+                currentRow = newRow;
+                currentColumn = newColumn;
+            }
+        }
+
+        // Go through the last row and save the column position of the filled tile for the next maze
+        for(int i = 0; i < gridSizeX; i++)
+        {
+            if (mazeGrid[i, gridSizeZ - 1] == 1)
+                _lastTileX = i;        
+        }
+
+        // Add dead ends
+        ExpandMaze();
+    }
+
+    private void ExpandMaze()
+    {
+        //int numDeadEnds = numDeadEnds;
+        //int numExpansionTiles = numExpansionTiles;
+
+        int deadEndCount = 0;
+
+        int excludeRows = Mathf.CeilToInt(gridSizeZ * 0.05f);
+        int excludeRange = gridSizeZ - excludeRows * 2;
+
+        while (deadEndCount < _numDeadEnds)
+        {
+            bool tileExpanded = false;
+
+            while (!tileExpanded)
+            {
+                int randomRow = UnityEngine.Random.Range(excludeRows, excludeRows + excludeRange);
+                int randomColumn = UnityEngine.Random.Range(0, gridSizeX);
+
+                if (mazeGrid[randomColumn, randomRow] == 1)
+                {
+                    // Expand the maze from the selected tile
+                    int expansionTilesCount = UnityEngine.Random.Range(1, _numExpansionTiles + 1);
+                    bool validExpansion = true;
+                    int expansionCount = 0;
+
+                    while (validExpansion && expansionCount < expansionTilesCount)
+                    {
+                        Vector2Int expansionDirection = GetRandomExpansionDirection();
+                        int expansionRow = randomRow + expansionDirection.y;
+                        int expansionColumn = randomColumn + expansionDirection.x;
+
+                        if (IsExpansionValid(expansionRow, expansionColumn))
+                        {
+                            mazeGrid[expansionColumn, expansionRow] = 1;
+                            randomRow = expansionRow;
+                            randomColumn = expansionColumn;
+                            expansionCount++;
+                        }
+                        else
+                            validExpansion = false;
+                    }
+
+                    if (expansionCount > 0)
+                    {
+                        tileExpanded = true;
+                        deadEndCount++;
+                    }
+                }
+            }
+        }
+
+        // Declare the directions of the maze tiles and receive back a list of TileInformation to hand to the TileGenerator
+        continuousMazeDirections = MazeTileDeclaration.PositionTiles(mazeGrid, gridSizeX, gridSizeZ, _tileSize);
+        OnMazeGenerated(continuousMazeDirections);
+    }
+
+    private Vector2Int GetRandomExpansionDirection()
+    {
+        int randomDirection = UnityEngine.Random.Range(0, 4);
+
+        switch (randomDirection)
+        {
+            case 0: return Vector2Int.up;
+            case 1: return Vector2Int.down;
+            case 2: return Vector2Int.left;
+            case 3: return Vector2Int.right;
+            default: return Vector2Int.zero;
+        }
+    }
+
+    private bool IsExpansionValid(int row, int column)
+    {
+        if (row < 1 || row >= gridSizeZ - 1 || column < 0 || column >= gridSizeX)
+            return false;
+
+        if (mazeGrid[column, row] == 1)
+            return false;
+
+        int adjacentTiles = 0;
+
+        if (row > 0 && mazeGrid[column, row - 1] == 1)
+            adjacentTiles++;
+
+        if (row < gridSizeZ - 1 && mazeGrid[column, row + 1] == 1)
+            adjacentTiles++;
+
+        if (column > 0 && mazeGrid[column - 1, row] == 1)
+            adjacentTiles++;
+
+        if (column < gridSizeX - 1 && mazeGrid[column + 1, row] == 1)
+            adjacentTiles++;
+
+        return adjacentTiles <= 1;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+
+        Vector3 gridSize = new Vector3(gridSizeX * _tileSize, 0f, gridSizeZ * _tileSize);
+        Gizmos.DrawWireCube(gridSize / 2f, gridSize);
+    }
+
+
+    /*
 
     public int minAdjacentTiles = 3;
     public int maxAdjacentTiles = 5;
@@ -83,115 +297,125 @@ public class MazeGenerator : MonoBehaviour
 
         //StartCoroutine(GenerateMaze(mazeObject.transform));
     }
-/*
-    private IEnumerator GenerateMaze(Transform parent)
-    {
-        mazeGrid = new GameObject[gridSizeX, gridSizeZ];
+    */
 
-        // Randomly create a tile on the first row [EDIT: Changed it always start in the middle]
-        //int startColumn = Random.Range(0, gridSizeX);
-        int startColumn = gridSizeX / 2;
+    #region Kaan 1stMaze
 
-        // mazeGrid[startColumn, 0] = Instantiate(tilePrefab, new Vector3(startColumn * tileSize, 0f, 0f), Quaternion.identity, parent);
-
-        //Instead of Instantiating, activating Tile in ObjectPool
-        GameObject newMazeTile = ObjectPool.Instance.GetTile(); // Instead of always going into the list to find it, we can just work with a direct access to the object       
-        newMazeTile.transform.position = new Vector3(startColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, 0f);
-        newMazeTile.transform.rotation = Quaternion.identity;
-        newMazeTile.transform.localScale = Vector3.one * 20;
-        newMazeTile.transform.parent = parent;
-
-        mazeGrid[startColumn, 0] = newMazeTile;
-
-        // Set the initial direction
-        Vector2Int direction = Vector2Int.up;
-
-        int currentRow = 0;
-        int currentColumn = startColumn;
-
-        bool firstPathGenerated = false; // Flag to track if the first path has been generated
-
-        while (currentRow < gridSizeZ - 1)
+    /*
+        private IEnumerator GenerateMaze(Transform parent)
         {
-            // Decide the number of adjacent tiles
-            int numAdjacentTiles = UnityEngine.Random.Range(minAdjacentTiles, maxAdjacentTiles + 1);
+            mazeGrid = new GameObject[gridSizeX, gridSizeZ];
 
-            // Change direction based on the current direction
-            if (direction == Vector2Int.up)
+            // Randomly create a tile on the first row [EDIT: Changed it always start in the middle]
+            //int startColumn = Random.Range(0, gridSizeX);
+            int startColumn = gridSizeX / 2;
+
+            // mazeGrid[startColumn, 0] = Instantiate(tilePrefab, new Vector3(startColumn * tileSize, 0f, 0f), Quaternion.identity, parent);
+
+            //Instead of Instantiating, activating Tile in ObjectPool
+            GameObject newMazeTile = ObjectPool.Instance.GetTile(); // Instead of always going into the list to find it, we can just work with a direct access to the object       
+            newMazeTile.transform.position = new Vector3(startColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, 0f);
+            newMazeTile.transform.rotation = Quaternion.identity;
+            newMazeTile.transform.localScale = Vector3.one * 20;
+            newMazeTile.transform.parent = parent;
+
+            mazeGrid[startColumn, 0] = newMazeTile;
+
+            // Set the initial direction
+            Vector2Int direction = Vector2Int.up;
+
+            int currentRow = 0;
+            int currentColumn = startColumn;
+
+            bool firstPathGenerated = false; // Flag to track if the first path has been generated
+
+            while (currentRow < gridSizeZ - 1)
             {
-                // Next direction must be left or right
-                if (currentColumn - numAdjacentTiles < 0)
+                // Decide the number of adjacent tiles
+                int numAdjacentTiles = UnityEngine.Random.Range(minAdjacentTiles, maxAdjacentTiles + 1);
+
+                // Change direction based on the current direction
+                if (direction == Vector2Int.up)
                 {
-                    // If the decision falls outside the left boundary, set the direction to right
-                    direction = Vector2Int.right;
-                }
-                else if (currentColumn + numAdjacentTiles >= gridSizeX)
-                {
-                    // If the decision falls outside the right boundary, set the direction to left
-                    direction = Vector2Int.left;
+                    // Next direction must be left or right
+                    if (currentColumn - numAdjacentTiles < 0)
+                    {
+                        // If the decision falls outside the left boundary, set the direction to right
+                        direction = Vector2Int.right;
+                    }
+                    else if (currentColumn + numAdjacentTiles >= gridSizeX)
+                    {
+                        // If the decision falls outside the right boundary, set the direction to left
+                        direction = Vector2Int.left;
+                    }
+                    else
+                    {
+                        // Randomly decide between left and right
+                        direction = UnityEngine.Random.value < 0.5f ? Vector2Int.left : Vector2Int.right;
+                    }
                 }
                 else
                 {
-                    // Randomly decide between left and right
-                    direction = UnityEngine.Random.value < 0.5f ? Vector2Int.left : Vector2Int.right;
+                    // Next direction must be up
+                    direction = Vector2Int.up;
                 }
-            }
-            else
-            {
-                // Next direction must be up
-                direction = Vector2Int.up;
-            }
 
-            // Instantiate adjacent tiles based on the current direction
-            for (int i = 0; i < numAdjacentTiles; i++)
-            {
-                int newRow = currentRow + direction.y;
-                int newColumn = currentColumn + direction.x;
-
-                //Changing previous adjacent Tile with direction=Vector2Int.up to Curve
-                MazeTileDeclaration.ChangePreviousTile(mazeGrid[currentColumn, currentRow], direction, i);
-
-                // Check if the next position goes beyond the array boundaries on the front direction
-                if (newRow >= gridSizeZ - 1)
+                // Instantiate adjacent tiles based on the current direction
+                for (int i = 0; i < numAdjacentTiles; i++)
                 {
-                    // Adjust the direction to fit within the boundaries
-                    direction = (currentColumn == 0) ? Vector2Int.right : Vector2Int.left;
+                    int newRow = currentRow + direction.y;
+                    int newColumn = currentColumn + direction.x;
+
+                    //Changing previous adjacent Tile with direction=Vector2Int.up to Curve
+                    MazeTileDeclaration.ChangePreviousTile(mazeGrid[currentColumn, currentRow], direction, i);
+
+                    // Check if the next position goes beyond the array boundaries on the front direction
+                    if (newRow >= gridSizeZ - 1)
+                    {
+                        // Adjust the direction to fit within the boundaries
+                        direction = (currentColumn == 0) ? Vector2Int.right : Vector2Int.left;
+                    }
+
+                    // //Instantiate the tile at the new position
+                    // GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
+
+                    //Instead of Instantiating, activating Tile in ObjectPool
+                    GameObject newTile = ObjectPool.Instance.GetTile();
+                    newTile.transform.position = new Vector3(newColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, newRow * tileSize);
+                    newTile.transform.rotation = Quaternion.identity;
+                    newTile.transform.localScale = Vector3.one * 20;
+                    newTile.transform.parent = parent;
+
+                    //Declaring Tile Direction & Curves for adjacent Tiles
+                    MazeTileDeclaration.DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
+
+                    // Store the tile in the mazeGrid array and mark it as 1
+                    mazeGrid[newColumn, newRow] = newTile;
+
+                    currentRow = newRow;
+                    currentColumn = newColumn;
                 }
 
-                // //Instantiate the tile at the new position
-                // GameObject newTile = Instantiate(tilePrefab, new Vector3(newColumn * tileSize, 0f, newRow * tileSize), Quaternion.identity, parent);
+                if (!firstPathGenerated && currentRow == gridSizeZ - 1)
+                {
+                    // First path generated
+                    firstPathGenerated = true;
+                }
 
-                //Instead of Instantiating, activating Tile in ObjectPool
-                GameObject newTile = ObjectPool.Instance.GetTile();
-                newTile.transform.position = new Vector3(newColumn * tileSize - (gridSizeX * tileSize) / 2, 0f, newRow * tileSize);
-                newTile.transform.rotation = Quaternion.identity;
-                newTile.transform.localScale = Vector3.one * 20;
-                newTile.transform.parent = parent;
-
-                //Declaring Tile Direction & Curves for adjacent Tiles
-                MazeTileDeclaration.DeclareAdjacentTiles(newTile, direction, i, numAdjacentTiles);
-
-                // Store the tile in the mazeGrid array and mark it as 1
-                mazeGrid[newColumn, newRow] = newTile;
-
-                currentRow = newRow;
-                currentColumn = newColumn;
+                yield return new WaitForSeconds(delayBetweenSteps);
             }
 
-            if (!firstPathGenerated && currentRow == gridSizeZ - 1)
-            {
-                // First path generated
-                firstPathGenerated = true;
-            }
+            //if (firstPathGenerated)
 
-            yield return new WaitForSeconds(delayBetweenSteps);
         }
 
-        //if (firstPathGenerated)
+    */
 
-    }
+    #endregion
 
-*/
+    #region Krista Maze
+
+    /*
 
     private void OnDrawGizmos()
     {
@@ -470,6 +694,9 @@ public class MazeGenerator : MonoBehaviour
             return false;
     }
 
+        */
+
+    #endregion
 
 }
 
@@ -503,13 +730,11 @@ public class TileInformation
     public TileArea Area;
 
 
-    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction, TileArea area)
+    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction)
     {
         IndexX = indexX;
         IndexZ = indexZ;
         TileDirectionIndex = tileDirectionIndex;
         Direction = direction; 
-        Area=area;      
-
     }
 }

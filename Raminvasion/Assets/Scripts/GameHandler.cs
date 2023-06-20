@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,6 +20,9 @@ public class GameHandler : MonoBehaviour
         }
         else
             Destroy(gameObject);
+
+        if (FindObjectOfType<NetworkManager>() == null)
+            SetPlayer(PlayerTag.Player1);
     }
 
     #region Player 
