@@ -1,12 +1,13 @@
 
+using Photon.Pun;
 using System;
 using UnityEngine;
 
-public class CollectablesHandler : MonoBehaviour
+public class CollectablesHandler : MonoBehaviourPunCallbacks
 {
     #region Singleton
 
-    public static CollectablesHandler Instance {  get; private set; }
+    public static CollectablesHandler Instance { get; private set; }
 
     private void Awake()
     {
@@ -18,20 +19,51 @@ public class CollectablesHandler : MonoBehaviour
 
     #endregion
 
+    private PlayerTag currentPlayer;
 
-    public event Action<float> OnPlayer1SpeedChange;
-
-    public event Action<float> OnPlayer2SpeedChange;
-
-
-    public void ChangeSpeed(PlayerTag player, float speed)
+    private void Start()
     {
-        switch(player)
-        {
-            case PlayerTag.Player1: OnPlayer1SpeedChange(speed);
-                break;
-            case PlayerTag.Player2: OnPlayer2SpeedChange(speed);
-                break;
-        }
+        GameHandler.Instance.OnPlayerChange += SetPlayer;
     }
+
+    private void SetPlayer(PlayerTag player)
+    {
+        Debug.Log("PlayerSet");
+        currentPlayer = player;
+    }
+
+    public void ChangeSpeed(float speed)
+    {
+        SendSpeedValues(currentPlayer, speed);
+        SpreadSpeeed(currentPlayer, speed);
+    }
+
+    private void SpreadSpeeed(PlayerTag player, float speed)
+    {
+        GameHandler.Instance.UpdateSpeed(player, speed);
+    }
+
+    public void SendSpeedValues(PlayerTag player, float speed)
+    {
+        photonView.RPC("ReceiveSpeed", RpcTarget.Others, player, speed);
+    }
+
+    [PunRPC]
+    private void ReceiveSpeed(PlayerTag player, float speed)
+    {
+        SpreadSpeeed(player, speed);
+    }
+
+
+    public void UpdateRamenSpeed(PlayerTag playerTag, int speedChange)
+    {
+        photonView.RPC("RamenSpeedTransfer", RpcTarget.Others, playerTag, speedChange);
+    }
+
+    [PunRPC]
+    private void RamenSpeedTransfer(PlayerTag player, float speed)
+    {
+        GameHandler.Instance.UpdateSpeed(player, speed);
+    }
+
 }
