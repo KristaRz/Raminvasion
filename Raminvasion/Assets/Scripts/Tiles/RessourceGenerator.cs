@@ -61,19 +61,19 @@ public class RessourceGenerator : MonoBehaviour
         foodTiles=new Dictionary<TileInformation, int>();
 
         List<TileInformation> mainPathTiles=new();
-        List<TileInformation> secondaryPathTiles=new();
+        // List<TileInformation> secondaryPathTiles=new();
         List<TileInformation> deadEndTiles=new();
 
         mainPathTiles=givenList.FindAll(tile=> tile.Area==TileArea.MainPath);
-        secondaryPathTiles=givenList.FindAll(tile=> tile.Area==TileArea.SecondaryPath);
+        //secondaryPathTiles=givenList.FindAll(tile=> tile.Area==TileArea.SecondaryPath);
         deadEndTiles=givenList.FindAll(tile=> tile.Area==TileArea.DeadEnd);
 
         if(mainPathTiles.Count>0){
           DistributeFood(mainPathTiles);  
         }
-        if(secondaryPathTiles.Count>0){
-          DistributeFood(secondaryPathTiles);  
-        }
+        // if(secondaryPathTiles.Count>0){
+        //   DistributeFood(secondaryPathTiles);  
+        // }
         if(deadEndTiles.Count>0){
           DistributeFood(deadEndTiles);  
         }
@@ -100,10 +100,10 @@ public class RessourceGenerator : MonoBehaviour
 
             float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
 
-            if(pathTiles[0].Area==TileArea.SecondaryPath){
-                //for secondary path it could be flat 60-70%
-                foodPercentage=0.65f;
-            }
+            // if(pathTiles[0].Area==TileArea.SecondaryPath){
+            //     //for secondary path it could be flat 60-70%
+            //     foodPercentage=0.65f;
+            // }
 
             int foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
 
