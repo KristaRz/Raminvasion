@@ -1,9 +1,117 @@
-using System.Collections;
+// Defines the tile directions 
+
 using System.Collections.Generic;
-using UnityEngine;
+
 
 public static class MazeTileDeclaration
 {
+
+    public static List<TileInformation> PositionTiles(int[,] mazeGrid, int gridSizeX, int gridSizeZ, int tileSize)
+    {
+        List<TileInformation> continuousMazeDirections = new();
+
+        for (int row = 0; row < gridSizeZ; row++)
+        {
+            for (int column = 0; column < gridSizeX; column++)
+            {
+                if (mazeGrid[column, row] == 1)
+                {
+                    bool hasBack = row < gridSizeZ - 1 && mazeGrid[column, row + 1] == 1;
+                    bool hasFront = row > 0 && mazeGrid[column, row - 1] == 1;
+                    bool hasLeft = column > 0 && mazeGrid[column - 1, row] == 1;
+                    bool hasRight = column < gridSizeX - 1 && mazeGrid[column + 1, row] == 1;
+
+                    TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical);  // create a tile 
+
+                    /*
+                    Vector3 tilePosition = new Vector3(column * tileSize, 0f, row * tileSize);
+
+                    GameObject tile = ObjectPool.Instance.GetTile();
+                    tile.SetActive(true);
+                    tile.transform.position = tilePosition;
+                    tile.transform.rotation = Quaternion.identity;
+
+                    TileInfo TileInfo = tile.GetComponent<TileInfo>();
+                    */
+
+                    if (row == 0 || row == gridSizeZ - 1)
+                    {
+                        newTile.Direction = TileDirection.Vertical;
+                    }
+                    //else if (hasRight && hasLeft && hasFront && hasBack)
+                    //{
+                    //    TileInfo.DeclareTileDirection(TileDirection.LeftFrontRight);
+                    //}
+                    else if (hasRight && hasLeft && hasFront)
+                    {
+                        newTile.Direction = TileDirection.RightBackLeft;//
+                    }
+                    else if (hasRight && hasLeft && hasBack)
+                    {
+                        newTile.Direction = TileDirection.LeftFrontRight;
+                    }
+                    else if (hasFront && hasLeft && hasBack)
+                    {
+                        newTile.Direction = TileDirection.BackLeftFront;//
+                    }
+                    else if (hasRight && hasFront && hasBack)
+                    {
+                        newTile.Direction = TileDirection.FrontRightBack;
+                    }
+                    else if (hasBack && hasFront)
+                    {
+                        newTile.Direction = TileDirection.Vertical;
+                    }
+                    else if (hasBack && hasLeft)
+                    {
+                        newTile.Direction = TileDirection.LeftFront;
+                    }
+                    else if (hasBack && hasRight)
+                    {
+                        newTile.Direction = TileDirection.RightFront;
+                    }
+                    else if (hasLeft && hasFront)
+                    {
+                        newTile.Direction = TileDirection.BackLeft;
+                    }
+                    else if (hasLeft && hasRight)
+                    {
+                        newTile.Direction = TileDirection.Horizontal;
+                    }
+                    else if (hasRight && hasFront)
+                    {
+                        newTile.Direction = TileDirection.BackRight;
+                    }
+                    else if (hasFront)
+                    {
+                        newTile.Direction = TileDirection.FrontDead;
+                    }
+                    else if (hasBack)
+                    {
+                        //TileInfo.DeclareTileDirection(TileDirection.BackDead);
+                    }
+                    else if (hasLeft)
+                    {
+                        newTile.Direction = TileDirection.RightDead; // Swap LeftDead with RightDead
+                    }
+                    else if (hasRight)
+                    {
+                        newTile.Direction = TileDirection.LeftDead; // Swap RightDead with LeftDead
+                    }
+
+                    continuousMazeDirections.Add(newTile);
+                }
+            }
+        }
+
+        return continuousMazeDirections;
+    }
+
+
+    #region Jules declaration
+
+    /*
+
     public static void ChangePreviousTile(GameObject tile, Vector2Int direction, int adjacentTilesIndex){
 
         //Only for Curves with previous direction.y>0, Changing in next Maze-Generation step bcs both curve direction are needed
@@ -48,6 +156,14 @@ public static class MazeTileDeclaration
             
         } 
     }
+    */
+
+    #endregion
+
+
+    #region Krista merge
+
+    /*
 
     /////////////////////////////////////////////////////////////
     //////////// Tile declaration for MazeGenerator /////////////
@@ -254,5 +370,9 @@ public static class MazeTileDeclaration
         deadendTiles.RemoveAt(0);
         return continousMaze;
     }
+
+    */
+
+    #endregion
 
 }

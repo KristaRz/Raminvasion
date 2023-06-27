@@ -1,6 +1,7 @@
 // Created 15.05.2023 by Krista Plagemann //
-// Edit: Generates batches of 4x8 tiles(or takes them) and instantiates rows of tiles according to player position //
-// Earlier:Generates a single line of tiles 4x8 upon entering trigger collider.//
+// Takes care of calling for new generated mazes while we walk and divides them into rows to activate
+// according to player position and deactivates them by ramen position.//
+
 
 
 using System;
@@ -18,6 +19,7 @@ public class TileGenerator : MonoBehaviour
 
     private void Awake()
     {
+        transform.parent = null;
         if (Instance == null)
         {
             Instance = this;
@@ -31,13 +33,23 @@ public class TileGenerator : MonoBehaviour
 
     [SerializeField] private Transform _PlayerToTrack;
     [SerializeField] private Transform _VacuumRamenToTrack;
+    [SerializeField] private NavMeshSurface _navMeshSurface;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
 
     [SerializeField] private int _LaneColumns = 20;
     [SerializeField] private int _LaneRows = 20;
     [SerializeField] private int _TileWidth = 20;
+    [SerializeField] private int _MinAdjacentTiles = 3;
+    [SerializeField] private int _MaxAdjacentTiles = 5;
+    [SerializeField] private int _numDeadEnds = 10;
+    [SerializeField] private int _numExpansionTiles = 1;
 
     [SerializeField] private bool areaVisualDebug;
+
+    /// <summary>
+    /// Hands over the newest row spawned counting up.
+    /// </summary>
+    public Action<int> OnNewRowSpawned = delegate { };
 
     private float _offset;
     private int _rowsGeneratedIndex = 0;
@@ -45,14 +57,53 @@ public class TileGenerator : MonoBehaviour
     private List<TileInformation> _activeSortedTiles = new();
 
     private bool firstMazeReady = false;
-
     private GameObject _mazeParent;
-    
-    [SerializeField] private NavMeshSurface _navMeshSurface;
+
+
+    #region Setters
+
+    /// <summary>
+    /// Set the size of the next maze batch.
+    /// </summary>
+    /// <param name="columns">X size of maze in tile amount.</param>
+    /// <param name="rows">Z size of maze in tile amount.</param>
+    public void SetMazeSize(int columns, int rows)
+    {
+        _LaneColumns = columns;
+        _LaneRows = rows;
+    }
+
+    /// <summary>
+    /// Sets the parameters of the dead ends.
+    /// </summary>
+    /// <param name="numDeadEnds">Amount of dead ends in the next maze batch.</param>
+    /// <param name="numDeadEndLength">Amount of tiles that make up each dead end.</param>
+    public void SetDeadEnds(int numDeadEnds, int numDeadEndLength)
+    {
+        _numDeadEnds = numDeadEnds;
+        _numExpansionTiles = numDeadEndLength;
+    }
+
+    /// <summary>
+    /// Sets how long the streets are individually until there is a corner.
+    /// </summary>
+    /// <param name="minLength">Minimum continous length of one street until corner.</param>
+    /// <param name="maxLength">Maximum continous length of one street until corner.</param>
+    public void SetLengthOfStreets(int minLength, int maxLength)
+    {
+        _MinAdjacentTiles = minLength;
+        _MaxAdjacentTiles = maxLength;
+    }
+
+    #endregion
+
+
     private void Start()
     {
         _offset = ((_LaneColumns / 2) * _TileWidth);
         _mazeParent = new GameObject();
+        _mazeParent.name = "MazeTiles";
+
         MazeGenerator.Instance.OnMazeGenerated += FinishedMazeGeneration;
         OnSingleLineReady += GenerateSingleRow;
 
@@ -107,8 +158,8 @@ public class TileGenerator : MonoBehaviour
 
                 if (childTransform != null)
                 {
-                GameObject childGameObject = childTransform.gameObject;
-                Renderer childRenderer = childGameObject.GetComponent<Renderer>();
+                //GameObject childGameObject = childTransform.gameObject;
+                Renderer childRenderer = childTransform.gameObject.GetComponent<Renderer>();
                 if (childRenderer != null)
                 {
                     if(lines[j].Area==TileArea.MainPath){
@@ -130,6 +181,7 @@ public class TileGenerator : MonoBehaviour
             RessourceGenerator.Instance.HandleTileQueue(lines[j]);
         }
 
+        OnNewRowSpawned?.Invoke(_rowsGeneratedIndex);
         OnFirstLaneGenerated?.Invoke();  // this is empty after the first one so maybe remove later with bool or smth
         _navMeshSurface.BuildNavMesh(); // every time we make a row, we build the navmesh new with all active ones
     }
@@ -139,8 +191,8 @@ public class TileGenerator : MonoBehaviour
     {
         if (_nextBatch.Count <= 0)
         {
-            //Debug.Log("Getting new line");
-            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth);
+            //Debug.Log("Getting new maze");
+            MazeGenerator.Instance.GenerateMazeBlueprint(_LaneColumns, _LaneRows, _TileWidth, _MaxAdjacentTiles, _MinAdjacentTiles, _numDeadEnds, _numExpansionTiles);
         }
         else
         {
@@ -192,7 +244,7 @@ public class TileGenerator : MonoBehaviour
         {
             List<TileInformation> listToFill = new();
             foreach(var tile in givenTiles)
-                if(tile.IndexZ-_rowsGeneratedIndex == i)
+                if(tile.IndexZ == i)
                     listToFill.Add(tile);
             foreach(var removeTile in listToFill)
                 givenTiles.Remove(removeTile);
