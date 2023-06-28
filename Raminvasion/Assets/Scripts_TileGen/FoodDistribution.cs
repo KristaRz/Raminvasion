@@ -28,7 +28,7 @@ public class FoodDistribution : MonoBehaviour
         
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
         //always possible inner Positions
-        if(tileType!=TileType.DeadEnd){
+        
            possiblePositions=new List<Vector3>()
             {
                 new Vector3(0,foodHeight,0),
@@ -55,18 +55,18 @@ public class FoodDistribution : MonoBehaviour
                 possiblePositions.Add(new Vector3(outerSpace,foodHeight,0));
                 possiblePositions.Add(new Vector3(-outerSpace,foodHeight,0));
             }
-        }
+        
 
 
         Vector3 randomPosition;
 
-        if(tileType==TileType.DeadEnd){
-            //one place to loot foodAmount
-            randomPosition=new Vector3(innerSpace,tileGround.transform.position.y,0);
-        }
-        else{
+        // if(tileType==TileType.DeadEnd){
+        //     //one place to loot foodAmount (y should be on floor)
+        //     randomPosition=new Vector3(innerSpace,foodHeight,0);
+        // }
+        // else{
             randomPosition=GetRandomItem(possiblePositions);
-        }
+        // }
         
         //adjust to TileWidth
         TileWidth=gameObject.transform.localScale.x; 
