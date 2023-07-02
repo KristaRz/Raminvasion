@@ -148,55 +148,57 @@ public class MazeGenerator : MonoBehaviour
 
     private void ExpandMaze()
     {
-        //int numDeadEnds = numDeadEnds;
-        //int numExpansionTiles = numExpansionTiles;
-
         int deadEndCount = 0;
 
         int excludeRows = Mathf.CeilToInt(gridSizeZ * 0.05f);
         int excludeRange = gridSizeZ - excludeRows * 2;
 
+        int[,] firstPath;
+        firstPath = mazeGrid;
+
         while (deadEndCount < _numDeadEnds)
         {
-            bool tileExpanded = false;
+            int randomRow = UnityEngine.Random.Range(excludeRows, excludeRows + excludeRange);
+            int randomColumn = UnityEngine.Random.Range(0, gridSizeX);
 
-            while (!tileExpanded)
+            if (mazeGrid[randomColumn, randomRow] == 1)
             {
-                int randomRow = UnityEngine.Random.Range(excludeRows, excludeRows + excludeRange);
-                int randomColumn = UnityEngine.Random.Range(0, gridSizeX);
 
-                if (mazeGrid[randomColumn, randomRow] == 1)
+                // Expand the maze from the selected tile
+                int expansionTilesCount = UnityEngine.Random.Range(1, _numExpansionTiles + 1);
+                int expansionCount = 0;
+
+                while (expansionCount < expansionTilesCount)
                 {
-                    // Expand the maze from the selected tile
-                    int expansionTilesCount = UnityEngine.Random.Range(1, _numExpansionTiles + 1);
-                    bool validExpansion = true;
-                    int expansionCount = 0;
+                    Vector2Int expansionDirection = GetRandomExpansionDirection();
+                    int expansionRow = randomRow + expansionDirection.y;
+                    int expansionColumn = randomColumn + expansionDirection.x;
 
-                    while (validExpansion && expansionCount < expansionTilesCount)
+                    if (IsExpansionValid(expansionRow, expansionColumn))
                     {
-                        Vector2Int expansionDirection = GetRandomExpansionDirection();
-                        int expansionRow = randomRow + expansionDirection.y;
-                        int expansionColumn = randomColumn + expansionDirection.x;
+                        mazeGrid[randomColumn, randomRow] = 2; // Mark the selected tile as 2
+                        firstPath[randomColumn, randomRow] = 2; // Mark the selected tile as 2
 
-                        if (IsExpansionValid(expansionRow, expansionColumn))
-                        {
-                            mazeGrid[expansionColumn, expansionRow] = 1;
-                            randomRow = expansionRow;
-                            randomColumn = expansionColumn;
-                            expansionCount++;
-                        }
-                        else
-                            validExpansion = false;
+                        mazeGrid[expansionColumn, expansionRow] = 2;
+
+                        randomRow = expansionRow;
+                        randomColumn = expansionColumn;
+                        expansionCount++;
                     }
-
-                    if (expansionCount > 0)
+                    else
                     {
-                        tileExpanded = true;
-                        deadEndCount++;
+                        break;
                     }
                 }
+
+                if (expansionCount > 0)
+                {
+                    deadEndCount++;
+                }
+
             }
         }
+
 
         // Declare the directions of the maze tiles and receive back a list of TileInformation to hand to the TileGenerator
         continuousMazeDirections = MazeTileDeclaration.PositionTiles(mazeGrid, gridSizeX, gridSizeZ, _tileSize);
@@ -220,26 +222,38 @@ public class MazeGenerator : MonoBehaviour
     private bool IsExpansionValid(int row, int column)
     {
         if (row < 1 || row >= gridSizeZ - 1 || column < 0 || column >= gridSizeX)
+        {
             return false;
+        }
 
-        if (mazeGrid[column, row] == 1)
+        if (mazeGrid[column, row] != 0) // Not an empty tile
+        {
             return false;
+        }
 
         int adjacentTiles = 0;
 
-        if (row > 0 && mazeGrid[column, row - 1] == 1)
+        if (row > 0 && mazeGrid[column, row - 1] > 0) // Check top neighbor
+        {
             adjacentTiles++;
+        }
 
-        if (row < gridSizeZ - 1 && mazeGrid[column, row + 1] == 1)
+        if (row < gridSizeZ - 1 && mazeGrid[column, row + 1] > 0) // Check bottom neighbor
+        {
             adjacentTiles++;
+        }
 
-        if (column > 0 && mazeGrid[column - 1, row] == 1)
+        if (column > 0 && mazeGrid[column - 1, row] > 0) // Check left neighbor
+        {
             adjacentTiles++;
+        }
 
-        if (column < gridSizeX - 1 && mazeGrid[column + 1, row] == 1)
+        if (column < gridSizeX - 1 && mazeGrid[column + 1, row] > 0) // Check right neighbor
+        {
             adjacentTiles++;
+        }
 
-        return adjacentTiles <= 1;
+        return adjacentTiles == 1;
     }
 
     private void OnDrawGizmos()
