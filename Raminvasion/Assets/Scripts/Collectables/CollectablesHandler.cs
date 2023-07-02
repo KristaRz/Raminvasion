@@ -3,6 +3,8 @@ using Photon.Pun;
 using System;
 using UnityEngine;
 
+public enum CollectableType { Onion }
+
 public class CollectablesHandler : MonoBehaviourPunCallbacks
 {
     #region Singleton
@@ -20,6 +22,8 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
     #endregion
 
     private PlayerTag currentPlayer;
+    public event Action<CollectableType> OnCollected = delegate { };
+
 
     private void Start()
     {
@@ -34,6 +38,7 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
 
     public void ChangeSpeed(float speed)
     {
+        OnCollected?.Invoke(CollectableType.Onion);
         SendSpeedValues(currentPlayer, speed);
         SpreadSpeeed(currentPlayer, speed);
     }
@@ -57,7 +62,7 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
 
     public void UpdateRamenSpeed(PlayerTag playerTag, int speedChange)
     {
-        photonView.RPC("RamenSpeedTransfer", RpcTarget.Others, playerTag, speedChange);
+        photonView.RPC("RamenSpeedTransfer", RpcTarget.Others, playerTag, (float)speedChange);
     }
 
     [PunRPC]
