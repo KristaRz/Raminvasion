@@ -59,6 +59,8 @@ public class MazeGenerator : MonoBehaviour
     private int _lastTileX;
     private bool _firstMazeGenerated = false;
 
+    private int _crossWaysAmount = 0;
+
     public void GenerateMazeBlueprint(int columns, int rows, int tileSize, int minAdjacentTiles, int maxAdjacentTiles, int numDeadEnds, int numExpansionTiles)
     {       
         _tileSize = tileSize;
@@ -149,21 +151,21 @@ public class MazeGenerator : MonoBehaviour
     private void ExpandMaze()
     {
         int deadEndCount = 0;
+        int tryCount = 0;
+        int failCount = 0;
 
         int excludeRows = Mathf.CeilToInt(gridSizeZ * 0.05f);
         int excludeRange = gridSizeZ - excludeRows * 2;
 
-        int[,] firstPath;
-        firstPath = mazeGrid;
+        int[,] firstPath = (int[,])mazeGrid.Clone(); // Create a copy of the mazeGrid for the first path
 
         while (deadEndCount < _numDeadEnds)
         {
             int randomRow = UnityEngine.Random.Range(excludeRows, excludeRows + excludeRange);
             int randomColumn = UnityEngine.Random.Range(0, gridSizeX);
 
-            if (mazeGrid[randomColumn, randomRow] == 1)
+            if (firstPath[randomColumn, randomRow] == 1)
             {
-
                 // Expand the maze from the selected tile
                 int expansionTilesCount = UnityEngine.Random.Range(1, _numExpansionTiles + 1);
                 int expansionCount = 0;
@@ -198,11 +200,75 @@ public class MazeGenerator : MonoBehaviour
 
             }
         }
+        AddCrossWays( firstPath);
 
 
         // Declare the directions of the maze tiles and receive back a list of TileInformation to hand to the TileGenerator
         continuousMazeDirections = MazeTileDeclaration.PositionTiles(mazeGrid, gridSizeX, gridSizeZ, _tileSize);
         OnMazeGenerated(continuousMazeDirections);
+
+
+    }
+
+    private void AddCrossWays( int[,] firstPath)
+    {
+        int crossWayCount = 0;
+
+        while (crossWayCount < _crossWaysAmount)
+        {
+            for (int row = 0; row < gridSizeZ; row++)
+            {
+                for (int column = 0; column < gridSizeX; column++)
+                {
+                    if (firstPath[column, row] == 2)
+                    {
+                        if (TryExpandFromPosition(column, row))
+                        {
+                            crossWayCount++;
+                            if (crossWayCount >= _crossWaysAmount)
+                                return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private bool TryExpandFromPosition(int column, int row)
+    {
+
+        int expansionCount = 0;
+
+        while (expansionCount < _numExpansionTiles)
+        {
+            Vector2Int expansionDirection = GetRandomExpansionDirection();
+            int expansionRow = row + expansionDirection.y;
+            int expansionColumn = column + expansionDirection.x;
+
+            if (IsExpansionValid(expansionRow, expansionColumn))
+            {
+                mazeGrid[column, row] = 2; // Mark the selected tile as 2
+                mazeGrid[expansionColumn, expansionRow] = 2;
+
+                column = expansionColumn;
+                row = expansionRow;
+                expansionCount++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (expansionCount > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    
     }
 
     private Vector2Int GetRandomExpansionDirection()
