@@ -3,7 +3,7 @@ using Photon.Pun;
 using System;
 using UnityEngine;
 
-public enum CollectableType { Onion }
+public enum CollectableType { Onion, Carrot }
 
 public class CollectablesHandler : MonoBehaviourPunCallbacks
 {
