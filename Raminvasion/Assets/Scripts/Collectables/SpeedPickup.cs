@@ -12,7 +12,16 @@ public class SpeedPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount);
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            
+            
+            Animator onionAnim=gameObject.GetComponent<Animator>();
+            onionAnim.Play("Collected");
         }
     }
+
+    public void DestroyObj(){
+        Destroy(gameObject);
+    }
+
 }

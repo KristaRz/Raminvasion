@@ -247,7 +247,7 @@ public class MazeGenerator : MonoBehaviour
         Gizmos.color = Color.white;
 
         Vector3 gridSize = new Vector3(gridSizeX * _tileSize, 0f, gridSizeZ * _tileSize);
-        Gizmos.DrawWireCube(gridSize / 2f, gridSize);
+        Gizmos.DrawWireCube(gridSize /2f, gridSize);
     }
 
 
@@ -738,5 +738,6 @@ public class TileInformation
         IndexZ = indexZ;
         TileDirectionIndex = tileDirectionIndex;
         Direction = direction; 
+        // Area=area;
     }
 }
