@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b457448d1fd97d047beacad18f6742d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MinAdjacentTiles: 3
-  _MaxAdjacentTiles: 5
 --- !u!1 &2941082023639400789
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,6 +469,10 @@ PrefabInstance:
     - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
       propertyPath: CameraTurnSpeed
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
+      propertyPath: GroundLayers.m_Bits
+      value: 576
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
