@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 2941082023639402409}
   m_Layer: 0
   m_Name: Ramen1
-  m_TagString: Untagged
+  m_TagString: Ramen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
