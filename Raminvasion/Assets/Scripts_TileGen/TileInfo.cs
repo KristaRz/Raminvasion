@@ -13,7 +13,7 @@ public enum TileDirection{
     Vertical, Horizontal,
     BackRight, BackLeft, LeftFront ,RightFront,
     LeftFrontRight, FrontRightBack, RightBackLeft, BackLeftFront, 
-    LeftDead,FrontDead, RightDead,
+    LeftDead,FrontDead, RightDead, BackDead,
     Empty
 }
 
@@ -41,6 +41,11 @@ public class TileInfo : MonoBehaviour
     [SerializeField] private GameObject wallRight;
     [SerializeField] private GameObject wallDown;
     [SerializeField] private GameObject wallLeft;
+
+    [SerializeField] private GameObject ramensStall;
+
+    
+
 
     public void DeclareTileDirection(TileDirection type){
         tileDirection=type;
@@ -115,6 +120,11 @@ public class TileInfo : MonoBehaviour
             this.gameObject.transform.eulerAngles=new Vector3(0,180,0);
             break;
 
+            case TileDirection.BackDead:
+            DeclareTileType(TileType.DeadEnd);
+            this.gameObject.transform.eulerAngles=new Vector3(0,270,0);
+            break;
+
             // default:
             // Debug.Log("Do nothing");
             // break;
@@ -131,6 +141,7 @@ public class TileInfo : MonoBehaviour
             wallDown.SetActive(false);
             wallLeft.SetActive(true);
             wallRight.SetActive(true);
+            ramensStall.SetActive(false);
             break;
 
             //default BackRight
@@ -139,6 +150,7 @@ public class TileInfo : MonoBehaviour
             wallDown.SetActive(false);
             wallTop.SetActive(true);
             wallLeft.SetActive(true);
+            ramensStall.SetActive(false);
             break;
             
             //default LeftRightFront
@@ -147,6 +159,7 @@ public class TileInfo : MonoBehaviour
             wallDown.SetActive(true);
             wallTop.SetActive(false);
             wallLeft.SetActive(false);
+            ramensStall.SetActive(false);
             break;
 
             //default LeftDead
@@ -155,6 +168,7 @@ public class TileInfo : MonoBehaviour
             wallRight.SetActive(false);
             wallTop.SetActive(true);
             wallLeft.SetActive(true);
+            ramensStall.SetActive(true);
             break;
             
         }
@@ -162,7 +176,7 @@ public class TileInfo : MonoBehaviour
 
     private void Start() {
        // DeclareTileDirection(tileDirection);  
-        tiledirectionCount=System.Enum.GetNames(typeof(TileDirection)).Length;
+        // tiledirectionCount=System.Enum.GetNames(typeof(TileDirection)).Length;
     }
 
     // private void OnMouseDown() {

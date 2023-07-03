@@ -85,18 +85,23 @@ public static class MazeTileDeclaration
                     else if (hasFront)
                     {
                         newTile.Direction = TileDirection.FrontDead;
+                        newTile.Area=TileArea.DeadEnd;
                     }
                     else if (hasBack)
-                    {
-                        //TileInfo.DeclareTileDirection(TileDirection.BackDead);
+                    {   
+                        //just added this for completion
+                        newTile.Direction = TileDirection.BackDead;
+                        newTile.Area=TileArea.DeadEnd;  
                     }
                     else if (hasLeft)
                     {
                         newTile.Direction = TileDirection.RightDead; // Swap LeftDead with RightDead
+                        newTile.Area=TileArea.DeadEnd;
                     }
                     else if (hasRight)
                     {
                         newTile.Direction = TileDirection.LeftDead; // Swap RightDead with LeftDead
+                        newTile.Area=TileArea.DeadEnd;
                     }
 
                     continuousMazeDirections.Add(newTile);
