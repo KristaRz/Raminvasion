@@ -53,8 +53,13 @@ public class ObjectPool : MonoBehaviour
     {
         foreach(GameObject tile in objects)
         {
-            if(_Tiles.Contains(tile))
+            if (_Tiles.Contains(tile))
+            {
+                GameObject gazeCollider = tile.transform.Find("GazeCollider").gameObject;
+                if(gazeCollider != null)
+                    gazeCollider.GetComponent<Collider>().enabled = true;
                 tile.SetActive(false);
+            }
         }
     }
 }

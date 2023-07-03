@@ -1,8 +1,8 @@
-using Photon.Pun;
-using Photon.Realtime;
+
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+
 
 public enum PlayerTag { Player1, Player2 }
 
@@ -32,17 +32,29 @@ public class GameHandler : MonoBehaviour
     public event Action<PlayerTag> OnPlayerChange = delegate { };
 
     public UnityEvent OnStartGame;
+    public event Action<GameObject, GameObject> OnPlayerDefined = delegate { };
+
+    private GameObject _playerObject;
+    private GameObject _ramenObject;
 
     public void SetPlayer(PlayerTag player)
     {
         currentPlayer = player;
         OnPlayerChange(currentPlayer);
+        
         PlayerSet = true;
     }
 
     public void StartGame()
     {
         OnStartGame?.Invoke();
+    }
+
+    public void PlayerSpawned()
+    {
+        _playerObject = GameObject.FindGameObjectWithTag("Player");
+        _ramenObject = GameObject.FindGameObjectWithTag("Ramen");
+        OnPlayerDefined(_playerObject, _ramenObject);
     }
 
     #endregion
@@ -60,11 +72,13 @@ public class GameHandler : MonoBehaviour
         if(player == PlayerTag.Player1)
         {
             Player1Speed += speed;
+            if(Player1Speed < 0f) Player1Speed = 0f;
             OnPlayer1Speed(Player1Speed);
         }
         else
         {
             Player2Speed += speed;
+            if (Player2Speed < 0f) Player2Speed = 0f;
             OnPlayer2Speed(Player2Speed);
         }
     }

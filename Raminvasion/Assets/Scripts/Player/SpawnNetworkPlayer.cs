@@ -31,6 +31,7 @@ public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
             //_Player2Prefab = PhotonNetwork.Instantiate("NetPlayer2", transform.position, transform.rotation);
             Instantiate(_Player2Prefab, transform.position, transform.rotation);
         }
+        GameHandler.Instance.PlayerSpawned();
 
         _MenuCamera.SetActive(false);
     }
