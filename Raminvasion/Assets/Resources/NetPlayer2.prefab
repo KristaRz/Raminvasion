@@ -714,8 +714,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b457448d1fd97d047beacad18f6742d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MinAdjacentTiles: 3
-  _MaxAdjacentTiles: 5
 --- !u!1 &2941082023639400789
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,8 +744,8 @@ Transform:
   m_GameObject: {fileID: 2941082023639400789}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.11, y: 4.23, z: -2.3600006}
-  m_LocalScale: {x: 3.7247326, y: 1.8639307, z: 3.7247326}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2.42, y: 1.9870981, z: 3.0703087}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2941082023639400582}
   m_RootOrder: 6
@@ -759,7 +757,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2941082023639400789}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 2575121373303798309, guid: 14b514cfe4a187e4892784cc2f2a26c2, type: 3}
 --- !u!23 &2941082023639402256
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2286,8 +2284,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7943114043437001945}
     - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
+      propertyPath: MoveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
       propertyPath: CameraTurnSpeed
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455853296429482271, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
+      propertyPath: GroundLayers.m_Bits
+      value: 576
       objectReference: {fileID: 0}
     - target: {fileID: 8241116982632989140, guid: 1cfa56cb1a942cb4e926a754d1ce6bfc, type: 3}
       propertyPath: m_Avatar

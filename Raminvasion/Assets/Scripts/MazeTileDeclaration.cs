@@ -14,12 +14,12 @@ public static class MazeTileDeclaration
         {
             for (int column = 0; column < gridSizeX; column++)
             {
-                if (mazeGrid[column, row] == 1)
+                if (mazeGrid[column, row] > 0)
                 {
-                    bool hasBack = row < gridSizeZ - 1 && mazeGrid[column, row + 1] == 1;
-                    bool hasFront = row > 0 && mazeGrid[column, row - 1] == 1;
-                    bool hasLeft = column > 0 && mazeGrid[column - 1, row] == 1;
-                    bool hasRight = column < gridSizeX - 1 && mazeGrid[column + 1, row] == 1;
+                    bool hasBack = row < gridSizeZ - 1 && mazeGrid[column, row + 1] > 0;
+                    bool hasFront = row > 0 && mazeGrid[column, row - 1] > 0;
+                    bool hasLeft = column > 0 && mazeGrid[column - 1, row] > 0;
+                    bool hasRight = column < gridSizeX - 1 && mazeGrid[column + 1, row] > 0;
 
                     TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical);  // create a tile 
 
@@ -85,18 +85,23 @@ public static class MazeTileDeclaration
                     else if (hasFront)
                     {
                         newTile.Direction = TileDirection.FrontDead;
+                        newTile.Area=TileArea.DeadEnd;
                     }
                     else if (hasBack)
-                    {
-                        //TileInfo.DeclareTileDirection(TileDirection.BackDead);
+                    {   
+                        //just added this for completion
+                        newTile.Direction = TileDirection.BackDead;
+                        newTile.Area=TileArea.DeadEnd;  
                     }
                     else if (hasLeft)
                     {
                         newTile.Direction = TileDirection.RightDead; // Swap LeftDead with RightDead
+                        newTile.Area=TileArea.DeadEnd;
                     }
                     else if (hasRight)
                     {
                         newTile.Direction = TileDirection.LeftDead; // Swap RightDead with LeftDead
+                        newTile.Area=TileArea.DeadEnd;
                     }
 
                     continuousMazeDirections.Add(newTile);

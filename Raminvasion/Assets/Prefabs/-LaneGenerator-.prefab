@@ -46,12 +46,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _PlayerToTrack: {fileID: 0}
   _VacuumRamenToTrack: {fileID: 0}
+  _navMeshSurface: {fileID: 0}
   _LaneColumns: 20
   _LaneRows: 25
   _TileWidth: 20
-  _numDeadEnds: 10
+  _MinAdjacentTiles: 3
+  _MaxAdjacentTiles: 5
+  _numDeadEnds: 5
   _numExpansionTiles: 3
-  _navMeshSurface: {fileID: 0}
+  areaVisualDebug: 0
   OnFirstLaneGenerated:
     m_PersistentCalls:
       m_Calls: []
