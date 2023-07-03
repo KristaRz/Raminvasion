@@ -144,10 +144,10 @@ public class TileInfo : MonoBehaviour
             wallLeft.SetActive(true);
             wallRight.SetActive(true);
 
-            cornerFillerDownLeft.SetActive(false);
-            cornerFillerDownRight.SetActive(false);
-            cornerFillerTopLeft.SetActive(false);
-            cornerFillerTopRight.SetActive(false);
+            // cornerFillerDownLeft.SetActive(false);
+            // cornerFillerDownRight.SetActive(false);
+            // cornerFillerTopLeft.SetActive(false);
+            // cornerFillerTopRight.SetActive(false);
             break;
 
             //default BackRight
@@ -157,10 +157,10 @@ public class TileInfo : MonoBehaviour
             wallTop.SetActive(true);
             wallLeft.SetActive(true);
 
-            cornerFillerDownLeft.SetActive(false);
-            cornerFillerDownRight.SetActive(true);
-            cornerFillerTopLeft.SetActive(false);
-            cornerFillerTopRight.SetActive(false);
+            // cornerFillerDownLeft.SetActive(false);
+            // cornerFillerDownRight.SetActive(true);
+            // cornerFillerTopLeft.SetActive(false);
+            // cornerFillerTopRight.SetActive(false);
             break;
             
             //default LeftRightFront
@@ -170,10 +170,10 @@ public class TileInfo : MonoBehaviour
             wallTop.SetActive(false);
             wallLeft.SetActive(false);
 
-            cornerFillerDownLeft.SetActive(false);
-            cornerFillerDownRight.SetActive(false);
-            cornerFillerTopLeft.SetActive(true);
-            cornerFillerTopRight.SetActive(true);
+            // cornerFillerDownLeft.SetActive(false);
+            // cornerFillerDownRight.SetActive(false);
+            // cornerFillerTopLeft.SetActive(true);
+            // cornerFillerTopRight.SetActive(true);
             break;
 
             //default LeftDead
@@ -183,10 +183,10 @@ public class TileInfo : MonoBehaviour
             wallTop.SetActive(true);
             wallLeft.SetActive(true);
 
-            cornerFillerDownLeft.SetActive(false);
-            cornerFillerDownRight.SetActive(false);
-            cornerFillerTopLeft.SetActive(false);
-            cornerFillerTopRight.SetActive(false);
+            // cornerFillerDownLeft.SetActive(false);
+            // cornerFillerDownRight.SetActive(false);
+            // cornerFillerTopLeft.SetActive(false);
+            // cornerFillerTopRight.SetActive(false);
             break;
             
         }

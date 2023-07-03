@@ -54,7 +54,7 @@ MonoBehaviour:
   _MaxAdjacentTiles: 5
   _numDeadEnds: 10
   _numExpansionTiles: 3
-  areaVisualDebug: 1
+  areaVisualDebug: 0
   OnFirstLaneGenerated:
     m_PersistentCalls:
       m_Calls: []
