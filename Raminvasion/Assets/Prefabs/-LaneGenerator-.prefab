@@ -52,7 +52,7 @@ MonoBehaviour:
   _TileWidth: 20
   _MinAdjacentTiles: 3
   _MaxAdjacentTiles: 5
-  _numDeadEnds: 10
+  _numDeadEnds: 5
   _numExpansionTiles: 3
   areaVisualDebug: 0
   OnFirstLaneGenerated:

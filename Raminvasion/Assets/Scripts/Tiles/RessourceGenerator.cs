@@ -20,6 +20,7 @@ public class RessourceGenerator : MonoBehaviour
     [SerializeField] private DifficultyMode difficultyMode;
 
     [SerializeField] private Dictionary<TileInformation, int> foodTiles;
+    [SerializeField] private Dictionary<TileInformation, int> obstacleTiles;
 
     [SerializeField] public Queue<TileInformation> tileQueue;
 
@@ -59,6 +60,7 @@ public class RessourceGenerator : MonoBehaviour
 
         List<TileInformation> givenList=new(newMazeTiles);
         foodTiles=new Dictionary<TileInformation, int>();
+        obstacleTiles=new Dictionary<TileInformation, int>();
 
         List<TileInformation> mainPathTiles=new();
         // List<TileInformation> secondaryPathTiles=new();
@@ -70,6 +72,7 @@ public class RessourceGenerator : MonoBehaviour
 
         if(mainPathTiles.Count>0){
           DistributeFood(mainPathTiles);  
+          DistributeObstacles(mainPathTiles);  
         }
         // if(secondaryPathTiles.Count>0){
         //   DistributeFood(secondaryPathTiles);  
@@ -79,6 +82,7 @@ public class RessourceGenerator : MonoBehaviour
         }
         
         InstantiateOnTiles(foodTiles);
+        InstantiateOnTiles2(obstacleTiles);
 
     }
 
@@ -88,29 +92,64 @@ public class RessourceGenerator : MonoBehaviour
         {
             for (int i = 0; i < item.Value; i++)
             {
-                item.Key.TileObject.GetComponent<FoodDistribution>().PlaceFood();
+                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceFood();
             }
         }
     }
 
-    private void DistributeFood(List<TileInformation> pathTiles){
-        if(pathTiles!=null){
+    private void InstantiateOnTiles2(Dictionary<TileInformation,int> foodTiles){
+        foreach (var item in foodTiles)
+        {
+            for (int i = 0; i < item.Value; i++)
+            {
+                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceObstacles();
+            }
+        }
+    }
 
-            //there should be extern function as rulebook for different cases
+    private int GetFoodAmount(List<TileInformation> pathTiles){
+       //rulebook to fill
+            int foodAmount=0;
 
-            float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
+            if(pathTiles[0].Area==TileArea.DeadEnd){
+                //for deadEnd drop 2-3
+                foodAmount=3;
+            }
+            else{
+                float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
 
             // if(pathTiles[0].Area==TileArea.SecondaryPath){
             //     //for secondary path it could be flat 60-70%
             //     foodPercentage=0.65f;
             // }
 
-            int foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
-
-            if(pathTiles[0].Area==TileArea.DeadEnd){
-                //for deadEnd drop 2-3
-                foodAmount=3;
+              foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
             }
+            return foodAmount;
+    }
+
+    private int GetObstacleAmount(List<TileInformation> pathTiles){
+       //rulebook to fill
+            int foodAmount=0;
+
+            
+            
+                float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
+
+            // if(pathTiles[0].Area==TileArea.SecondaryPath){
+            //     //for secondary path it could be flat 60-70%
+            //     foodPercentage=0.65f;
+            // }
+
+              foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
+            
+            return foodAmount;
+    }
+
+    private void DistributeFood(List<TileInformation> pathTiles){
+        if(pathTiles!=null){
+
+            int foodAmount=GetFoodAmount(pathTiles);
 
             //building Dictionary for tiles and food
             Dictionary<TileInformation,int> foodTilesAmount=new();
@@ -137,6 +176,36 @@ public class RessourceGenerator : MonoBehaviour
             }
         }
 
+        private void DistributeObstacles(List<TileInformation> pathTiles){
+        if(pathTiles!=null){
+
+            int foodAmount=GetObstacleAmount(pathTiles);
+
+            //building Dictionary for tiles and food
+            Dictionary<TileInformation,int> foodTilesAmount=new();
+
+            foreach(TileInformation item in pathTiles){
+                foodTilesAmount.Add(item,0);
+            }
+            
+            int index = 0;
+            while (foodAmount >=0 && index < 1000)
+            {
+                int randomIndex=Mathf.RoundToInt(Random.Range(0,pathTiles.Count-1));
+                
+                foodTilesAmount[pathTiles[randomIndex]]++;
+
+                foodAmount--;
+    
+            }
+
+            foreach (var item in foodTilesAmount)
+            {
+                obstacleTiles.Add(item.Key,item.Value);
+            }
+            }
+        }
+
         private int GetFoodPercentage(DifficultyMode difficulty)
         {
             switch (difficulty)
@@ -150,7 +219,24 @@ public class RessourceGenerator : MonoBehaviour
                 default:
                     return 0; 
             }
-    }
+        }
+
+        private int GetObstaclePercentage(DifficultyMode difficulty)
+        {
+            switch (difficulty)
+            {
+                case DifficultyMode.Easy:
+                    return 40; 
+                case DifficultyMode.Medium:
+                    return 65; 
+                case DifficultyMode.Hard:
+                    return 100; 
+                default:
+                    return 0; 
+            }
+        }
+
+        
 }
     
     
