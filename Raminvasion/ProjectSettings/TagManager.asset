@@ -7,6 +7,8 @@ TagManager:
   - CinemachineTarget
   - GazeCollider
   - Ramen
+  - BoxObstacle
+  - SauceObstacle
   layers:
   - Default
   - TransparentFX
