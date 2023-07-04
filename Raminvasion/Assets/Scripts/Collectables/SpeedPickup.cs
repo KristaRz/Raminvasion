@@ -28,8 +28,8 @@ public class SpeedPickup : MonoBehaviour
 
             triggerd=true;
             
-            Animator onionAnim=gameObject.GetComponent<Animator>();
-            onionAnim.Play("Collected");
+            Animator foodAnim=gameObject.GetComponent<Animator>();
+            foodAnim.Play("Collected");
         }
     }
 

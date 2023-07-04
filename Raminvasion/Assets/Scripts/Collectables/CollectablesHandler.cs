@@ -2,6 +2,7 @@
 using Photon.Pun;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public enum CollectableType { Onion, Carrot }
 
@@ -22,12 +23,15 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
     #endregion
 
     private PlayerTag currentPlayer;
+
+    // private Dictionary<int, CollectableType> collectedThingsInTime=new();
     public event Action<CollectableType> OnCollected = delegate { };
 
 
     private void Start()
     {
         GameHandler.Instance.OnPlayerChange += SetPlayer;
+        // this.OnCollected+=CountCollectables;
     }
 
     private void SetPlayer(PlayerTag player)
@@ -41,6 +45,19 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         OnCollected?.Invoke(typeCollected);
         SendSpeedValues(currentPlayer, speed);
         SpreadSpeeed(currentPlayer, speed);
+    }
+
+    private void CountCollectables(CollectableType item){
+        
+        // collectedThingsInTime.Add(Time.time, item);
+
+        //should remove all saved items with timestamp< currentTime-intervall
+        // float intervall=15f;
+        // foreach (var item in collectedThingsInTime){
+        //     if(item.Key<=Time.time)
+        // }
+        
+        // Debug.Log(collectedThingsInTime.Count);
     }
 
     private void SpreadSpeeed(PlayerTag player, float speed)
