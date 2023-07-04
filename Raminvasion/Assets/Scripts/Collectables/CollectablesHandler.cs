@@ -40,9 +40,9 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         currentPlayer = player;
     }
 
-    public void ChangeSpeed(float speed)
+    public void ChangeSpeed(float speed, CollectableType typeCollected)
     {
-        OnCollected?.Invoke(CollectableType.Onion);
+        OnCollected?.Invoke(typeCollected);
         SendSpeedValues(currentPlayer, speed);
         SpreadSpeeed(currentPlayer, speed);
     }
