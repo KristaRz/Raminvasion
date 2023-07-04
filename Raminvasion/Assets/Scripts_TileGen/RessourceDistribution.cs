@@ -64,6 +64,7 @@ public class RessourceDistribution : MonoBehaviour
                 possiblePositions.Add(new Vector3(outerSpace,0,0));
                 possiblePositions.Add(new Vector3(-outerSpace,0,0));
             }
+            
 
             firstCheckPos=true;
         }
@@ -89,7 +90,7 @@ public class RessourceDistribution : MonoBehaviour
     }
 
     private T GetRandomItem<T>(List<T> list){
-        if(list!=null || list.Count==0){
+        if(list!=null && list.Count!=0){
             int randomIndex = Random.Range(0, list.Count);
             return list[randomIndex];
         }

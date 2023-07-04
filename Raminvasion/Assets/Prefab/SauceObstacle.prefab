@@ -94,9 +94,10 @@ GameObject:
   - component: {fileID: 3188815478814138382}
   - component: {fileID: 7898326791721922838}
   - component: {fileID: -2230624346224437912}
+  - component: {fileID: 5156507429943498456}
   m_Layer: 0
   m_Name: SauceObstacle
-  m_TagString: Untagged
+  m_TagString: SauceObstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -128,7 +129,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.12
+  m_Radius: 0.075
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-2230624346224437912
 MonoBehaviour:
@@ -144,3 +145,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _DecreaseSpeedAmount: 3
   _EffectTime: 3
+  particleEffect: {fileID: 2955623459812423941, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
+--- !u!64 &5156507429943498456
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5702213075683936718}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: -1
+  m_Mesh: {fileID: -7343275056427110438, guid: 33e5ac1a94fb51943a75fa426ee3027b, type: 3}

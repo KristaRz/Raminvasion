@@ -11,33 +11,38 @@ public class ObstacleEffect : MonoBehaviour
     [SerializeField] private float _DecreaseSpeedAmount = 3;
     [SerializeField] private float _EffectTime = 3;
 
+    [SerializeField] private ParticleSystem particleEffect;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {   ThirdPersonController playerController =other.GetComponent<ThirdPersonController>();
+
+            Vector3 hitPoint = other.ClosestPointOnBounds(transform.position);          
+                
+
+            ParticleSystem newParticleEffect = Instantiate(particleEffect, hitPoint, Quaternion.identity);
+            newParticleEffect.Play();
+            
             StartCoroutine(ChangeMoveSpeed(playerController));
         }
 
     }
 
     private IEnumerator ChangeMoveSpeed(ThirdPersonController playerController)
-    {
-        if (gameObject.name == "BoxObstacle")
+    {   
+        if (gameObject.CompareTag("BoxObstacle"))
         {
-            //Doesnt work :(
-            playerController.MoveSpeed -= _DecreaseSpeedAmount;
+            playerController.MoveSpeed = playerController.MoveSpeed-_DecreaseSpeedAmount;
         }
-        else if (gameObject.name == "SauceObstacle")
-        {
+        else if (gameObject.CompareTag("SauceObstacle"))
+        {   
             playerController.MoveSpeed = 0;
         }
-
-        // Debug.Log(playerController.MoveSpeed);
 
         yield return new WaitForSeconds(_EffectTime);
 
         playerController.MoveSpeed = 10;
-        // Debug.Log(playerController.MoveSpeed);
     }
 
     
