@@ -1,10 +1,17 @@
 
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
 
 public enum PlayerTag { Player1, Player2 }
+
+public enum DifficultyMode{
+    Easy,
+    Medium,
+    Hard
+}
 
 [DefaultExecutionOrder(-10)]
 public class GameHandler : MonoBehaviour
@@ -31,6 +38,8 @@ public class GameHandler : MonoBehaviour
     public PlayerTag currentPlayer { get; private set; }
     public event Action<PlayerTag> OnPlayerChange = delegate { };
 
+    
+
     public UnityEvent OnStartGame;
     public event Action<GameObject, GameObject> OnPlayerDefined = delegate { };
 
@@ -55,6 +64,8 @@ public class GameHandler : MonoBehaviour
         _playerObject = GameObject.FindGameObjectWithTag("Player");
         _ramenObject = GameObject.FindGameObjectWithTag("Ramen");
         OnPlayerDefined(_playerObject, _ramenObject);
+        StartCoroutine(CheckLevelDifficulty(_playerObject,_ramenObject));
+
     }
 
     #endregion
@@ -81,6 +92,57 @@ public class GameHandler : MonoBehaviour
             if (Player2Speed < 0f) Player2Speed = 0f;
             OnPlayer2Speed(Player2Speed);
         }
+    }
+
+    #endregion
+
+
+
+    #region Difficulty
+
+    public DifficultyMode difficultyMode;
+    public event Action<DifficultyMode> OnDifficultySwitched = delegate { };
+
+    [SerializeField] private float difficultyCheckTime=5f;
+
+    [SerializeField] private const float difficultyStep=10f;
+
+    private float CheckDistance(GameObject playerObj, GameObject ramenObj){
+        float currentDistance = Vector3.Distance(playerObj.transform.position, ramenObj.transform.position);
+
+        return currentDistance;
+    }
+
+    IEnumerator CheckLevelDifficulty(GameObject playerObj, GameObject ramenObj){
+        while(true){
+            
+            float distance = CheckDistance(playerObj,ramenObj);
+            
+            DifficultyMode difficulty = GetDifficulty(distance);
+
+            if(difficulty!=difficultyMode){
+                difficultyMode=difficulty;
+
+                //if an event for difficulty change is needed
+                OnDifficultySwitched?.Invoke(difficultyMode);
+            }
+            yield return new WaitForSeconds(difficultyCheckTime); 
+        }
+        
+    }
+    
+    //lets start simple here
+    public DifficultyMode GetDifficulty(float distancePlayerRamen){
+            switch(distancePlayerRamen){
+                case >=0 and < difficultyStep :
+                    return DifficultyMode.Easy;
+                case >=difficultyStep and <difficultyStep*2: 
+                    return DifficultyMode.Medium;
+                case >=difficultyStep*2 :
+                    return DifficultyMode.Hard;
+                default:
+                    return DifficultyMode.Medium;
+            }
     }
 
     #endregion
