@@ -80,7 +80,8 @@ public class GameHandler : MonoBehaviour
 
     public void UpdateSpeed(PlayerTag player, float speed)
     {
-        if(player == PlayerTag.Player1)
+        //Debug.Log($"Speed update for: {player} by {speed}");
+        if (player == PlayerTag.Player1)
         {
             Player1Speed += speed;
             if(Player1Speed < 0f) Player1Speed = 0f;
@@ -91,6 +92,29 @@ public class GameHandler : MonoBehaviour
             Player2Speed += speed;
             if (Player2Speed < 0f) Player2Speed = 0f;
             OnPlayer2Speed(Player2Speed);
+        }
+    }
+
+    public float Player1Distance { get; private set; } = 0f;
+    public float Player2Distance { get; private set; } = 0f;
+
+    public event Action<float> OnPlayer1Distance = delegate { };
+    public event Action<float> OnPlayer2Distance = delegate { };
+
+    public void UpdateDistance(PlayerTag player, float distance)
+    {
+        
+        if (player == PlayerTag.Player1)
+        {
+            Player1Distance = distance;
+            if (Player1Distance < 0f) Player1Distance = 0f;
+            OnPlayer1Distance(Player1Distance);
+        }
+        else
+        {
+            Player2Distance = distance;
+            if (Player2Distance < 0f) Player2Distance = 0f;
+            OnPlayer2Distance(Player2Distance);
         }
     }
 

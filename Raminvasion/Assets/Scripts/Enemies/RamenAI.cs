@@ -29,19 +29,11 @@ public class RamenAI : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(_StartingDelay);
 
-        //GameHandler.Instance.OnStartGame.AddListener(StartGame);
-
-        if (!GameHandler.Instance.PlayerSet)
-            GameHandler.Instance.OnPlayerChange += InitializeRamen;
+        if (GameHandler.Instance.PlayerSet)
+            InitializeRamen(GameHandler.Instance.currentPlayer);      
         else
-            InitializeRamen(_RamenEnemy);
+            GameHandler.Instance.OnPlayerChange += InitializeRamen;
 
-        _agent.SetDestination(_Player.position);
-        _active = true;
-    }
-
-    private void StartGame()
-    {
         _agent.SetDestination(_Player.position);
         _active = true;
     }

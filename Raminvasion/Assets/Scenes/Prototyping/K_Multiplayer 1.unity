@@ -247,6 +247,8 @@ MonoBehaviour:
   OnStartGame:
     m_PersistentCalls:
       m_Calls: []
+  difficultyMode: 0
+  difficultyCheckTime: 5
 --- !u!4 &628450249
 Transform:
   m_ObjectHideFlags: 0
@@ -1221,6 +1223,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1894967422}
     m_Modifications:
+    - target: {fileID: 6856247608231364720, guid: 2e9a6a0e68112084aa3d192851f3d5b6, type: 3}
+      propertyPath: _DistanceUpdateRate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6856247609380251937, guid: 2e9a6a0e68112084aa3d192851f3d5b6, type: 3}
       propertyPath: m_Name
       value: -Overlay-

@@ -1,3 +1,10 @@
+// Created by Krista Plagemann //
+// Reacts to collected things and sends values over the network.
+// Onion > speed for self
+// Carrot > speed for other
+
+// Also send distance values over network bcs there is a photonView basically (not very clean code sry)
+
 
 using Photon.Pun;
 using System;
@@ -23,6 +30,7 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
     #endregion
 
     private PlayerTag currentPlayer;
+    private PlayerTag otherPlayer;
 
     // private Dictionary<int, CollectableType> collectedThingsInTime=new();
     public event Action<CollectableType> OnCollected = delegate { };
@@ -34,17 +42,41 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         // this.OnCollected+=CountCollectables;
     }
 
+    // Saves which player this and the other is. Also subscribes to this player's distance event.
     private void SetPlayer(PlayerTag player)
     {
-        Debug.Log("PlayerSet");
         currentPlayer = player;
+
+        if (player == PlayerTag.Player1)
+        {
+            GameHandler.Instance.OnPlayer1Distance += UpdateDistanceForOtherPlayer;
+            otherPlayer = PlayerTag.Player2;
+        }
+        else
+        {
+            GameHandler.Instance.OnPlayer2Distance += UpdateDistanceForOtherPlayer;
+            otherPlayer = PlayerTag.Player1;
+        }
     }
 
+    /// <summary>
+    /// Records a collectable as collected and saves the values associated with it.
+    /// </summary>
+    /// <param name="speed">How much speed does this change (use minus values to slow down)</param>
+    /// <param name="typeCollected">Which type of collectable is this? (onion for this player, carrot for other player)</param>
     public void ChangeSpeed(float speed, CollectableType typeCollected)
     {
         OnCollected?.Invoke(typeCollected);
-        SendSpeedValues(currentPlayer, speed);
-        SpreadSpeeed(currentPlayer, speed);
+        if (typeCollected == CollectableType.Onion)
+        {
+            SendSpeedValues(currentPlayer, speed);
+            SpreadSpeeed(currentPlayer, speed);
+        }
+        else if(typeCollected == CollectableType.Carrot)
+        {
+            SendSpeedValues(otherPlayer, speed);
+            SpreadSpeeed(otherPlayer, speed);
+        }
     }
 
     private void CountCollectables(CollectableType item){
@@ -60,22 +92,26 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         // Debug.Log(collectedThingsInTime.Count);
     }
 
+    // Records the speed change in the GameHandler
     private void SpreadSpeeed(PlayerTag player, float speed)
     {
         GameHandler.Instance.UpdateSpeed(player, speed);
     }
 
+    // Sends the own collected speed to other player
     public void SendSpeedValues(PlayerTag player, float speed)
     {
         photonView.RPC("ReceiveSpeed", RpcTarget.Others, player, speed);
     }
 
+    // Receives the speed change from other player
     [PunRPC]
     private void ReceiveSpeed(PlayerTag player, float speed)
     {
         SpreadSpeeed(player, speed);
     }
 
+    #region UpdateFullRamenSpeed
 
     public void UpdateRamenSpeed(PlayerTag playerTag, int speedChange)
     {
@@ -88,4 +124,23 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         GameHandler.Instance.UpdateSpeed(player, speed);
     }
 
+    #endregion
+
+    #region DistanceUpdate
+
+    // Updates the distance of this player recorded in the other player.//
+
+    public void UpdateDistanceForOtherPlayer(float distance)
+    {
+        photonView.RPC("UpdateDistanceOfOtherPlayer", RpcTarget.Others, currentPlayer, distance);
+    }
+
+    // Updates the distance of other player recorded in this player.//
+    [PunRPC]
+    private void UpdateDistanceOfOtherPlayer(PlayerTag player, float distance)
+    {
+        GameHandler.Instance.UpdateDistance(player, distance);
+    }
+
+    #endregion
 }
