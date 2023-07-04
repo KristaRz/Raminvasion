@@ -16,17 +16,17 @@ public class RamenStallInteraction : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Player")){
-            //idk if we introduce coins to exchange for better food or not
+        // if(other.CompareTag("Player")){
+        //     //idk if we introduce coins to exchange for better food or not
             
-                foreach (var item in foods)
-                {
-                item.SetActive(true);
-                foods.Remove(item);
+        //         foreach (var item in foods)
+        //         {
+        //         item.SetActive(true);
+        //         foods.Remove(item);
                 
-                }
+        //         }
             
             
-        }
+        // }
     }
 }

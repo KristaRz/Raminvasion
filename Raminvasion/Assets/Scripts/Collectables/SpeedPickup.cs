@@ -9,6 +9,7 @@ public class SpeedPickup : MonoBehaviour
 
     [SerializeField] public bool triggerd=false;
     [SerializeField] private float lerpSpeed=30;
+    [SerializeField] private CollectableType _CollectableType;
 
     private GameObject player;
 
@@ -19,7 +20,7 @@ public class SpeedPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount);
+            CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount, _CollectableType);
             // Destroy(gameObject);
             player=other.gameObject;
 
@@ -27,8 +28,8 @@ public class SpeedPickup : MonoBehaviour
 
             triggerd=true;
             
-            Animator onionAnim=gameObject.GetComponent<Animator>();
-            onionAnim.Play("Collected");
+            Animator foodAnim=gameObject.GetComponent<Animator>();
+            foodAnim.Play("Collected");
         }
     }
 

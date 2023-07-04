@@ -7,9 +7,9 @@ public class RessourceDistribution : MonoBehaviour
 
     [SerializeField] private GameObject tileGround;
 
-    [SerializeField] private GameObject ramenShop;
+    [SerializeField] private GameObject ramenShop=null;
 
-    [SerializeField] private GameObject foodPrefab;
+    [SerializeField] private List<GameObject> foodPrefabs=new();
     [SerializeField] private List<GameObject> obstaclePrefabs=new();
 
 
@@ -89,14 +89,20 @@ public class RessourceDistribution : MonoBehaviour
     }
 
     private T GetRandomItem<T>(List<T> list){
-        int randomIndex = Random.Range(0, list.Count);
-        return list[randomIndex];
+        if(list!=null || list.Count==0){
+            int randomIndex = Random.Range(0, list.Count);
+            return list[randomIndex];
+        }
+        return default;
+        
     }
 
     public void PlaceFood() {
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
+
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
-        
+        GameObject foodPrefab=GetRandomItem(foodPrefabs);
+
         GameObject food= Instantiate(foodPrefab, randomPosition, Quaternion.identity,this.gameObject.transform);
 
         if(tileType==TileType.DeadEnd){

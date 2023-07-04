@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-//should be somwhere else in a levelmanager with checks. for now its ok here
-public enum DifficultyMode{
-    Easy,
-    Medium,
-    Hard
-}
-
 
 public class RessourceGenerator : MonoBehaviour
 {
@@ -26,6 +19,8 @@ public class RessourceGenerator : MonoBehaviour
 
     [SerializeField] private int toPopulateTilesAmount=5;
 
+    private float currentDistance;
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +35,10 @@ public class RessourceGenerator : MonoBehaviour
     private void Start() {
         tileQueue=new();
     }
+
+    
+
+    
 
     public void HandleTileQueue(TileInformation tile){
         
@@ -116,12 +115,8 @@ public class RessourceGenerator : MonoBehaviour
                 foodAmount=3;
             }
             else{
+                difficultyMode=GameHandler.Instance.difficultyMode;
                 float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
-
-            // if(pathTiles[0].Area==TileArea.SecondaryPath){
-            //     //for secondary path it could be flat 60-70%
-            //     foodPercentage=0.65f;
-            // }
 
               foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
             }
@@ -132,16 +127,11 @@ public class RessourceGenerator : MonoBehaviour
        //rulebook to fill
             int foodAmount=0;
 
+            difficultyMode=GameHandler.Instance.difficultyMode;
             
-            
-                float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
+            float foodPercentage=GetFoodPercentage(difficultyMode)*0.01f;
 
-            // if(pathTiles[0].Area==TileArea.SecondaryPath){
-            //     //for secondary path it could be flat 60-70%
-            //     foodPercentage=0.65f;
-            // }
-
-              foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
+            foodAmount= Mathf.CeilToInt(pathTiles.Count*foodPercentage);
             
             return foodAmount;
     }
@@ -156,23 +146,23 @@ public class RessourceGenerator : MonoBehaviour
 
             foreach(TileInformation item in pathTiles){
                 foodTilesAmount.Add(item,0);
-            }
+                }
             
             int index = 0;
             while (foodAmount >=0 && index < 1000)
-            {
-                int randomIndex=Mathf.RoundToInt(Random.Range(0,pathTiles.Count-1));
-                
-                foodTilesAmount[pathTiles[randomIndex]]++;
+                {
+                    int randomIndex=Mathf.RoundToInt(Random.Range(0,pathTiles.Count-1));
+                    
+                    foodTilesAmount[pathTiles[randomIndex]]++;
 
-                foodAmount--;
-    
-            }
+                    foodAmount--;
+        
+                }
 
             foreach (var item in foodTilesAmount)
-            {
-                foodTiles.Add(item.Key,item.Value);
-            }
+                {
+                    foodTiles.Add(item.Key,item.Value);
+                }
             }
         }
 
@@ -205,6 +195,8 @@ public class RessourceGenerator : MonoBehaviour
             }
             }
         }
+
+        
 
         private int GetFoodPercentage(DifficultyMode difficulty)
         {
