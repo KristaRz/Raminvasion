@@ -34,7 +34,6 @@ public class RessourceDistribution : MonoBehaviour
         if(!firstCheckPos){
             possiblePositions=new();
         
-            
             //always possible inner Positions
 
             //first on x-z plane
@@ -69,10 +68,6 @@ public class RessourceDistribution : MonoBehaviour
             firstCheckPos=true;
         }
 
-        
-        
-
-
         Vector3 randomPosition=GetRandomItem(possiblePositions);
 
         //prevent double placement
@@ -86,7 +81,6 @@ public class RessourceDistribution : MonoBehaviour
         Vector3 scaledAdjustedPosition=addedHeightPos*TileWidth+tileGround.transform.position;
 
         return scaledAdjustedPosition;
-
     }
 
     private T GetRandomItem<T>(List<T> list){
@@ -108,7 +102,7 @@ public class RessourceDistribution : MonoBehaviour
 
         if(tileType==TileType.DeadEnd){
             GameObject ramenStall=transform.Find("ramen_stall").gameObject;
-            ramenStall.GetComponent<RamenStallInteraction>().foods.Add(food);
+            ramenStall.GetComponent<RamenStallInteraction>().AddFoodToStall(food);
         }
     }
 
