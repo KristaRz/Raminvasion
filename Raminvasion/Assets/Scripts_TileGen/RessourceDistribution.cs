@@ -112,7 +112,10 @@ public class RessourceDistribution : MonoBehaviour
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
         GameObject obstaclePrefab=GetRandomItem(obstaclePrefabs);
 
-        Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), Quaternion.identity,this.gameObject.transform);
+        float randomAngle = Random.Range(0f, 360f);
+        Quaternion randomRotation=Quaternion.Euler(0,randomAngle,0);
+
+        Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), randomRotation,this.gameObject.transform);
     }
 
 }
