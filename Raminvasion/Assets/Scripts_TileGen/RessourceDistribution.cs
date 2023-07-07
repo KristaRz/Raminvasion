@@ -27,6 +27,8 @@ public class RessourceDistribution : MonoBehaviour
     [SerializeField] private float innerSpace=0.11f; 
     [SerializeField] private float outerSpace=0.33f; 
 
+    
+
 
 
     private Vector3 GetPossiblePlacementPoint(TileType tileType){
@@ -92,7 +94,7 @@ public class RessourceDistribution : MonoBehaviour
         
     }
 
-    public void PlaceFood() {
+    public void PlaceFood(int currentRowIndex) {
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
@@ -106,11 +108,21 @@ public class RessourceDistribution : MonoBehaviour
         }
     }
 
-    public void PlaceObstacles(){
+    public void PlaceObstacles(int currentRowIndex){
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
-        GameObject obstaclePrefab=GetRandomItem(obstaclePrefabs);
+
+        // Debug.Log(currentRowIndex);
+        
+        GameObject obstaclePrefab;
+        if(currentRowIndex<=20){
+            //[0] is the box
+            obstaclePrefab=obstaclePrefabs[0];
+        }
+        else{
+            obstaclePrefab=GetRandomItem(obstaclePrefabs);
+        }
 
         float randomAngle = Random.Range(0f, 360f);
         Quaternion randomRotation=Quaternion.Euler(0,randomAngle,0);

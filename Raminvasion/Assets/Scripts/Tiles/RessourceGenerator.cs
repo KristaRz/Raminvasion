@@ -23,7 +23,10 @@ public class RessourceGenerator : MonoBehaviour
     [SerializeField] private int maxObstacleOnTile=3;
     [SerializeField] private int maxFoodOnTile=2;
 
-    private float currentDistance;
+    [SerializeField] private int currentRowSpawnedIndex=0;
+
+
+    
 
     private void Awake()
     {
@@ -38,20 +41,26 @@ public class RessourceGenerator : MonoBehaviour
 
     private void Start() {
         tileQueue=new();
+        
     }
 
-    
 
-    
 
-    public void HandleTileQueue(TileInformation tile){
+    public void HandleTileQueue(TileInformation tile, int rowsGeneratedIndex){
         
+
         tileQueue.Enqueue(tile);
         if(tileQueue.Count>=toPopulateTilesAmount){
+
+            //event subscribe didnt work, thats why its here
+            currentRowSpawnedIndex=rowsGeneratedIndex;
+            // Debug.Log($"Rows generated: {currentRowSpawnedIndex}");
+
             toPopulateTiles=new();
                 for (int i = 0; i < toPopulateTilesAmount ; i++)
                 {
                     TileInformation tileToPopulate= tileQueue.Dequeue();
+                    
                     toPopulateTiles.Add(tileToPopulate);
                 }
             RessourceAreaPlanning(toPopulateTiles);
@@ -75,9 +84,11 @@ public class RessourceGenerator : MonoBehaviour
         if(mainPathTiles.Count>0){
           DistributeFood(mainPathTiles);  
           DistributeObstacles(mainPathTiles);  
+        //   Debug.Log($"MainPath FoodTiles: {foodTiles.Count}");
         }
         if(deadEndTiles.Count>0){
           DistributeFood(deadEndTiles);  
+        //   Debug.Log($"DeadEnd FoodTiles: {foodTiles.Count}");
         }
         
         InstantiateFoodOnTiles(foodTiles);
@@ -87,11 +98,12 @@ public class RessourceGenerator : MonoBehaviour
 
 
     private void InstantiateFoodOnTiles(Dictionary<TileInformation,int> foodTiles){
+
         foreach (var item in foodTiles)
         {
             for (int i = 0; i < item.Value; i++)
             {
-                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceFood();
+                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceFood(currentRowSpawnedIndex);
             }
         }
     }
@@ -101,7 +113,7 @@ public class RessourceGenerator : MonoBehaviour
         {
             for (int i = 0; i < item.Value; i++)
             {
-                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceObstacles();
+                item.Key.TileObject.GetComponent<RessourceDistribution>().PlaceObstacles(currentRowSpawnedIndex);
             }
         }
     }
@@ -128,6 +140,8 @@ public class RessourceGenerator : MonoBehaviour
             int obstacleAmount=0;
 
             difficultyMode=GameHandler.Instance.difficultyMode;
+
+            Debug.Log(difficultyMode);
             
             float obstaclePercentage=GetFoodPercentage(difficultyMode)*0.01f;
 
@@ -140,6 +154,8 @@ public class RessourceGenerator : MonoBehaviour
         if(pathTiles!=null){
 
             int foodAmount=GetFoodAmount(pathTiles);
+
+            
 
             //building Dictionary for tiles and food
             Dictionary<TileInformation,int> foodTilesAmount=new();

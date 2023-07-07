@@ -178,7 +178,7 @@ public class TileGenerator : MonoBehaviour
 
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
-            RessourceGenerator.Instance.HandleTileQueue(lines[j]);
+            RessourceGenerator.Instance.HandleTileQueue(lines[j], _rowsGeneratedIndex);
         }
 
         OnNewRowSpawned?.Invoke(_rowsGeneratedIndex);
