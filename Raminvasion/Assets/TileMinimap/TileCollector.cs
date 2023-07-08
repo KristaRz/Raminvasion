@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+// Created by Krista Plagemann //
+// Casts a continuous ray to check for Gaze colliders. If found, adds it to the MinimapGenerator and disabled its collider. //
+
 using System.Threading.Tasks;
 using UnityEngine;
 

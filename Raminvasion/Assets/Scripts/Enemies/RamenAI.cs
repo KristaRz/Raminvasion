@@ -2,8 +2,6 @@
 // Makes the enemy ramen follow the player using navmesh //
 
 using Photon.Pun;
-using Photon.Realtime;
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
