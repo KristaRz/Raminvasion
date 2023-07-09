@@ -812,12 +812,12 @@ public class TileInformation
     public TileArea Area;
 
 
-    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction)
+    public TileInformation(int indexX, int indexZ, int tileDirectionIndex, TileDirection direction, TileArea area)
     {
         IndexX = indexX;
         IndexZ = indexZ;
         TileDirectionIndex = tileDirectionIndex;
         Direction = direction; 
-        // Area=area;
+        Area=area;
     }
 }

@@ -47,24 +47,16 @@ public class RessourceGenerator : MonoBehaviour
 
 
     public void HandleTileQueue(TileInformation tile, int rowsGeneratedIndex){
-        
-
         tileQueue.Enqueue(tile);
         if(tileQueue.Count>=toPopulateTilesAmount){
-
-            //event subscribe didnt work, thats why its here
             currentRowSpawnedIndex=rowsGeneratedIndex;
-            // Debug.Log($"Rows generated: {currentRowSpawnedIndex}");
-
             toPopulateTiles=new();
                 for (int i = 0; i < toPopulateTilesAmount ; i++)
                 {
                     TileInformation tileToPopulate= tileQueue.Dequeue();
-                    
                     toPopulateTiles.Add(tileToPopulate);
                 }
             RessourceAreaPlanning(toPopulateTiles);
-
         }
     }
 
