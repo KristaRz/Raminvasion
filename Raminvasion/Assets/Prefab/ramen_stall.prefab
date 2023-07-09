@@ -7572,6 +7572,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foods: []
+  PositiveParticle: {fileID: 5024009746357069192, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  NegativeParticle: {fileID: 5024009746357069192, guid: 08d21972077b3f4498cb582ebc6338f6, type: 3}
 --- !u!1 &7448326370968178567
 GameObject:
   m_ObjectHideFlags: 0

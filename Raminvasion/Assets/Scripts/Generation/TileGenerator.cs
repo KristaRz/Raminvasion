@@ -178,10 +178,10 @@ public class TileGenerator : MonoBehaviour
 
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
-            RessourceGenerator.Instance.HandleTileQueue(lines[j]);
+            RessourceGenerator.Instance.HandleTileQueue(lines[j], _rowsGeneratedIndex);//activate RessourceGenerator 
         }
 
-        OnNewRowSpawned?.Invoke(_rowsGeneratedIndex);
+        OnNewRowSpawned?.Invoke(_rowsGeneratedIndex); 
         OnFirstLaneGenerated?.Invoke();  // this is empty after the first one so maybe remove later with bool or smth
         _navMeshSurface.BuildNavMesh(); // every time we make a row, we build the navmesh new with all active ones
     }

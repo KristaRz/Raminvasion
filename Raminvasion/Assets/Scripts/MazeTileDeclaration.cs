@@ -1,7 +1,7 @@
 // Defines the tile directions 
 
 using System.Collections.Generic;
-
+using UnityEngine;
 
 public static class MazeTileDeclaration
 {
@@ -21,7 +21,7 @@ public static class MazeTileDeclaration
                     bool hasLeft = column > 0 && mazeGrid[column - 1, row] > 0;
                     bool hasRight = column < gridSizeX - 1 && mazeGrid[column + 1, row] > 0;
 
-                    TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical);  // create a tile 
+                    TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical, TileArea.MainPath);  // create a tile 
 
                     /*
                     Vector3 tilePosition = new Vector3(column * tileSize, 0f, row * tileSize);
@@ -161,6 +161,7 @@ public static class MazeTileDeclaration
             
         } 
     }
+
     */
 
     #endregion

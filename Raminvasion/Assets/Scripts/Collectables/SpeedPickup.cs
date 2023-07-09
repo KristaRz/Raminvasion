@@ -8,10 +8,10 @@ public class SpeedPickup : MonoBehaviour
     [SerializeField] private float _SpeedAmount = 3;
 
     [SerializeField] public bool triggerd=false;
-    [SerializeField] private float lerpSpeed=30;
+    private float lerpSpeed=15;
     [SerializeField] private CollectableType _CollectableType;
 
-    private GameObject player;
+    public GameObject player;
 
     private Vector3 initalPosition;
 
@@ -21,10 +21,9 @@ public class SpeedPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount, _CollectableType);
-            // Destroy(gameObject);
-            player=other.gameObject;
+            
 
-            initalPosition=gameObject.transform.position;
+            player=other.gameObject;
 
             triggerd=true;
             
@@ -33,13 +32,20 @@ public class SpeedPickup : MonoBehaviour
         }
     }
 
+
     public void DestroyObj(){
         Destroy(gameObject);
     }
 
     private void Update() {
         if(triggerd && gameObject!=null){
-            transform.position = Vector3.Lerp(initalPosition, player.transform.position, Time.deltaTime * lerpSpeed);
+            //not very performant to do this every update, but idk how else :(
+            initalPosition=gameObject.transform.position;
+            float playerHeight=player.GetComponent<CharacterController>().height;
+            Vector3 playerHeadPos=player.transform.position+new Vector3(0,playerHeight,0);
+            
+
+            transform.position = Vector3.Lerp(initalPosition, playerHeadPos , Time.deltaTime * lerpSpeed);
         }
     }
 

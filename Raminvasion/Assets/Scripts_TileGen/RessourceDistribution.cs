@@ -27,6 +27,8 @@ public class RessourceDistribution : MonoBehaviour
     [SerializeField] private float innerSpace=0.11f; 
     [SerializeField] private float outerSpace=0.33f; 
 
+    
+
 
 
     private Vector3 GetPossiblePlacementPoint(TileType tileType){
@@ -34,7 +36,6 @@ public class RessourceDistribution : MonoBehaviour
         if(!firstCheckPos){
             possiblePositions=new();
         
-            
             //always possible inner Positions
 
             //first on x-z plane
@@ -64,13 +65,10 @@ public class RessourceDistribution : MonoBehaviour
                 possiblePositions.Add(new Vector3(outerSpace,0,0));
                 possiblePositions.Add(new Vector3(-outerSpace,0,0));
             }
+            
 
             firstCheckPos=true;
         }
-
-        
-        
-
 
         Vector3 randomPosition=GetRandomItem(possiblePositions);
 
@@ -85,11 +83,10 @@ public class RessourceDistribution : MonoBehaviour
         Vector3 scaledAdjustedPosition=addedHeightPos*TileWidth+tileGround.transform.position;
 
         return scaledAdjustedPosition;
-
     }
 
     private T GetRandomItem<T>(List<T> list){
-        if(list!=null || list.Count==0){
+        if(list!=null && list.Count!=0){
             int randomIndex = Random.Range(0, list.Count);
             return list[randomIndex];
         }
@@ -97,7 +94,7 @@ public class RessourceDistribution : MonoBehaviour
         
     }
 
-    public void PlaceFood() {
+    public void PlaceFood(int currentRowIndex) {
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
@@ -107,17 +104,30 @@ public class RessourceDistribution : MonoBehaviour
 
         if(tileType==TileType.DeadEnd){
             GameObject ramenStall=transform.Find("ramen_stall").gameObject;
-            ramenStall.GetComponent<RamenStallInteraction>().foods.Add(food);
+            ramenStall.GetComponent<RamenStallInteraction>().AddFoodToStall(food);
         }
     }
 
-    public void PlaceObstacles(){
+    public void PlaceObstacles(int currentRowIndex){
         TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
         Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
-        GameObject obstaclePrefab=GetRandomItem(obstaclePrefabs);
 
-        Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), Quaternion.identity,this.gameObject.transform);
+        // Debug.Log(currentRowIndex);
+        
+        GameObject obstaclePrefab;
+        if(currentRowIndex<=20){
+            //[0] is the box
+            obstaclePrefab=obstaclePrefabs[0];
+        }
+        else{
+            obstaclePrefab=GetRandomItem(obstaclePrefabs);
+        }
+
+        float randomAngle = Random.Range(0f, 360f);
+        Quaternion randomRotation=Quaternion.Euler(0,randomAngle,0);
+
+        Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), randomRotation,this.gameObject.transform);
     }
 
 }

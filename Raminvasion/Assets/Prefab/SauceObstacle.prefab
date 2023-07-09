@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: -2230624346224437912}
   m_Layer: 0
   m_Name: SauceObstacle
-  m_TagString: Untagged
+  m_TagString: SauceObstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -128,7 +128,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.12
+  m_Radius: 0.075
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-2230624346224437912
 MonoBehaviour:
@@ -144,3 +144,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _DecreaseSpeedAmount: 3
   _EffectTime: 3
+  particleEffect: {fileID: 2955623459812423941, guid: f5507a8c6a22c404ab324980c4e8a11b, type: 3}
