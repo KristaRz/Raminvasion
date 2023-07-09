@@ -12,6 +12,7 @@ public class SpeedDisplay : MonoBehaviour
     [SerializeField] private Color[] _DangerColors;
     [SerializeField] private GameObject _Player1Prefab;
     [SerializeField] private GameObject _Player2Prefab;
+    [SerializeField] private float _DistanceUpdateRate;
 
     private PlayerUI _playerUIComponent;
     private Image _EnemyStateImage;
@@ -24,9 +25,10 @@ public class SpeedDisplay : MonoBehaviour
     private Transform _ramen;
     private float _thisPlayerSpeed;
     private float _otherPlayerSpeed;
+    private float _otherPlayerDistance = 5;
 
     private bool _updateValues = false;
-
+    private float _timeCollected = 0;
 
     // Updates image colors for both player according to speed and distance of the enemy ramens
     private async Task UpdateValues()
@@ -34,6 +36,16 @@ public class SpeedDisplay : MonoBehaviour
         while (_updateValues)
         {
             float distanceBtwPlayerAndRamen = Vector3.Distance(_player.position, _ramen.position);
+
+            // Save the distance between ramen and player for this player in the game handler
+            _timeCollected += Time.deltaTime;
+            if (_timeCollected >= _DistanceUpdateRate)
+            {
+                Debug.Log("Recording distance for" + _thisPlayer);
+                GameHandler.Instance.UpdateDistance(_thisPlayer, (int)distanceBtwPlayerAndRamen);
+                _timeCollected = 0;
+            }
+
             // under 0 is bad, over 5 is good?
             //Debug.Log($"Distance: { distanceBtwPlayerAndRamen}, speed: {_player1speed}, Division: {distanceBtwPlayerAndRamen/_player1speed}");
 
@@ -54,7 +66,7 @@ public class SpeedDisplay : MonoBehaviour
 
             // OTHER PLAYER //
 
-            float otherRelativeColor =  _otherPlayerSpeed/ 5 / (_DangerColors.Length) * (_DangerColors.Length - 1);
+            float otherRelativeColor = _otherPlayerDistance/ _otherPlayerSpeed/ (_DangerColors.Length) * (_DangerColors.Length - 1);
             if (otherRelativeColor >= _DangerColors.Length - 1)
                 otherRelativeColor = _DangerColors.Length - 1;
             else if (otherRelativeColor <= 0)
@@ -64,7 +76,6 @@ public class SpeedDisplay : MonoBehaviour
             float newT2 = otherRelativeColor - Mathf.FloorToInt(otherRelativeColor);
 
             _OtherPlayerStateImage.color = Color.Lerp(oldColor2, newColor2, newT2);
-            //_DistanceOtherPlayer.SetText(Mathf.FloorToInt(distanceBtwPlayerAndRamen).ToString());
             
             await Task.Yield();
         }    
@@ -76,6 +87,7 @@ public class SpeedDisplay : MonoBehaviour
         GameHandler.Instance.OnPlayerDefined += SetPlayer;        
         GameHandler.Instance.OnPlayer1Speed += Update1Speed;
         GameHandler.Instance.OnPlayer2Speed += Update2Speed;
+        // Subscribes to distance changes for the other player only   
     }
 
     // Spawns UI elements according to players and get some references as well as storing which player we are
@@ -95,6 +107,11 @@ public class SpeedDisplay : MonoBehaviour
         _OtherPlayerStateImage = _playerUIComponent.OtherPlayerStateImage;
         _DistanceText = _playerUIComponent.DistanceText;
         _DistanceOtherPlayer = _playerUIComponent.DistanceOtherPlayer;
+
+        if (_thisPlayer == PlayerTag.Player1)
+            GameHandler.Instance.OnPlayer2Distance += UpdateOtherDistance;
+        else
+            GameHandler.Instance.OnPlayer1Distance += UpdateOtherDistance;
 
         GameHandler.Instance.OnPlayerChange -= SpawnPlayerUI;
     }
@@ -127,7 +144,14 @@ public class SpeedDisplay : MonoBehaviour
             _thisPlayerSpeed = speed;
         else
             _otherPlayerSpeed = speed;
-        _DistanceOtherPlayer.text = speed.ToString();
+    }
+    
+    // Updates distance of other player
+    private void UpdateOtherDistance(float distance)
+    {
+        _otherPlayerDistance = (int)distance;
+        _DistanceOtherPlayer.SetText(_otherPlayerDistance.ToString());
+        Debug.Log("Update distance by" + _otherPlayerDistance);
     }
 
     private void OnDisable()

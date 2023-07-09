@@ -247,6 +247,8 @@ MonoBehaviour:
   OnStartGame:
     m_PersistentCalls:
       m_Calls: []
+  difficultyMode: 0
+  difficultyCheckTime: 5
 --- !u!4 &628450249
 Transform:
   m_ObjectHideFlags: 0
@@ -605,6 +607,9 @@ MonoBehaviour:
   toPopulateTiles: []
   difficultyMode: 1
   toPopulateTilesAmount: 5
+  maxObstacleOnTile: 3
+  maxFoodOnTile: 2
+  currentRowSpawnedIndex: 0
 --- !u!1 &1225779048
 GameObject:
   m_ObjectHideFlags: 0

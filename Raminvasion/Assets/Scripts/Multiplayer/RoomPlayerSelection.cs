@@ -1,5 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+// Created by Krista Plagemann //
+// Handles selecting a room in the lobby and joining as a certain player //
+
+
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;

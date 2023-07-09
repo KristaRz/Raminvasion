@@ -35,6 +35,7 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private Transform _VacuumRamenToTrack;
     [SerializeField] private NavMeshSurface _navMeshSurface;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
+    [SerializeField] private int _TilesVisibleBackward = 5;
 
     [SerializeField] private int _LaneColumns = 20;
     [SerializeField] private int _LaneRows = 20;
@@ -134,7 +135,7 @@ public class TileGenerator : MonoBehaviour
             if (_PlayerToTrack.position.z >= (_rowsGeneratedIndex - _TilesVisibleForward) * _TileWidth)
                 GetNewLine();
 
-            if (_VacuumRamenToTrack.position.z >= (_lastRowActive + 2) * _TileWidth)
+            if (_VacuumRamenToTrack.position.z >= (_lastRowActive + _TilesVisibleBackward) * _TileWidth)
                 RemoveSingleLine();
         }
     }
