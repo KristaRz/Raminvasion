@@ -928,6 +928,7 @@ MonoBehaviour:
   _SpeedAmount: -3
   triggerd: 0
   lerpSpeed: 15
+  _CollectableType: 1
 --- !u!95 &4860184312956377196
 Animator:
   serializedVersion: 4
