@@ -59,6 +59,7 @@ MonoBehaviour:
   - {r: 0.31984997, g: 0.7169812, b: 0.23448436, a: 1}
   _Player1Prefab: {fileID: 3358091122406344479, guid: 1157548cfa084da41a3d75ac35ef6d87, type: 3}
   _Player2Prefab: {fileID: 2140390157374006598, guid: e6b210314a6c39e4c8804227e3380f35, type: 3}
+  _DistanceUpdateRate: 1
 --- !u!1 &6856247608255060980
 GameObject:
   m_ObjectHideFlags: 0
