@@ -1,3 +1,9 @@
+// Created by Julia Podlipensky
+// > calculates amount of resources to distribute for dequeued instantiated Tiles
+//> distributes resource amount randomly across those Tiles in a Dictionary
+//> max. 2 foods and 3 obstacles per Tile
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,7 +51,14 @@ public class RessourceGenerator : MonoBehaviour
     }
 
 
+    
 
+    /// <summary>
+    /// SBuilding a Tile Queue of Instantiated Tiles. 
+    //After certain number is reached, these number of tiles are dequeued for the Resource Planning
+    /// </summary>
+    /// <param name="tile">TileInformation of instantiated Tile that should be queued.</param>
+    /// <param name="rowsGeneratedIndex">Updating current rowsGeneratedIndex from TileGenerator with every new tile queued </param>
     public void HandleTileQueue(TileInformation tile, int rowsGeneratedIndex){
         tileQueue.Enqueue(tile);
         if(tileQueue.Count>=toPopulateTilesAmount){

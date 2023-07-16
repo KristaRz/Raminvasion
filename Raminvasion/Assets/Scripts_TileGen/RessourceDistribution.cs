@@ -1,3 +1,10 @@
+// Created by Julia Podlipensky
+//> handles placement on Tile level
+//> distributes resources from RessourceGenerator-Dictionary across possible spawn positions on tile
+//> different resource types based on player progress
+
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
