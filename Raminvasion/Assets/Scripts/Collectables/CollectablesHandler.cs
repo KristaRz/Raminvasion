@@ -79,6 +79,7 @@ public class CollectablesHandler : MonoBehaviourPunCallbacks
         }
     }
 
+    //Julia didnt finish
     private void CountCollectables(CollectableType item){
         
         // collectedThingsInTime.Add(Time.time, item);

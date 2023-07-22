@@ -113,10 +113,11 @@ public static class MazeTileDeclaration
     }
 
 
-    #region Jules declaration
+    #region Julias declaration (on Kaans 1s maze)
 
     /*
 
+    //Backward change of TileDirection
     public static void ChangePreviousTile(GameObject tile, Vector2Int direction, int adjacentTilesIndex){
 
         //Only for Curves with previous direction.y>0, Changing in next Maze-Generation step bcs both curve direction are needed
@@ -133,6 +134,7 @@ public static class MazeTileDeclaration
         }
     }
 
+    //Direction Declaration of freshly instantiated Tile
     public static void DeclareAdjacentTiles(GameObject tile, Vector2Int direction, int adjacentTilesIndex, int numAdjacentTiles){
 
         //Curves based on maze-pattern to go Vector2Int.up again after last horizontal adjacent Tile

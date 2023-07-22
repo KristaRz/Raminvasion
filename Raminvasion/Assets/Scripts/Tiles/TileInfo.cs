@@ -1,14 +1,18 @@
+// Created by Julia Podlipensky
+//> Stores Information about the Instantiated Tile
+//> Functions for Changing Tile-Visuals according to needs
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+//Type of Area this Tile belongs to
 public enum TileArea{
     MainPath,
-    SecondaryPath,
     DeadEnd
 }
 
+//Type of Direction of Tile (the directions signal which walls are collapsed)
 public enum TileDirection{ 
     Vertical, Horizontal,
     BackRight, BackLeft, LeftFront ,RightFront,
@@ -17,6 +21,7 @@ public enum TileDirection{
     Empty
 }
 
+//Tile Base Type 
 public enum TileType{
     Straight,
     Curved,
@@ -30,13 +35,13 @@ public enum TileType{
 public class TileInfo : MonoBehaviour
 {   
     
-
     public TileType tileType;
 
     public TileDirection tileDirection;
 
     int tiledirectionCount;
     
+    [Header("GameObjects on Tile to be activated/deactivated")]
     [SerializeField] private GameObject wallTop;
     [SerializeField] private GameObject wallRight;
     [SerializeField] private GameObject wallDown;
@@ -46,7 +51,7 @@ public class TileInfo : MonoBehaviour
 
     
 
-
+    //Declares the Direction Visuals of the Tile by picking TileType and rotating it accordingly
     public void DeclareTileDirection(TileDirection type){
         tileDirection=type;
         switch (type)
@@ -131,6 +136,7 @@ public class TileInfo : MonoBehaviour
         }
     }
 
+    //Declares Tile BaseType
     public void DeclareTileType(TileType type){
         tileType=type;
         switch(type)
@@ -173,26 +179,5 @@ public class TileInfo : MonoBehaviour
             
         }
     }
-
-    private void Start() {
-       // DeclareTileDirection(tileDirection);  
-        // tiledirectionCount=System.Enum.GetNames(typeof(TileDirection)).Length;
-    }
-
-    // private void OnMouseDown() {
-        
-    //     if((int)tileDirection==tiledirectionCount-1){
-    //         tileDirection=0;
-    //     }
-    //     else{
-    //         tileDirection++;
-    //     }
-        
-
-    //     DeclareTileDirection(tileDirection);  
-
-    //     Debug.Log("Change type to: "+tileDirection);
-        
-    // }
 
 }

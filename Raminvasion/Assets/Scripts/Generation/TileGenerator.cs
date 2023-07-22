@@ -153,8 +153,8 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
 
+            //just for visual debugging
             if(areaVisualDebug){
-                //just for visual debugging
                 Transform childTransform = newTile.transform.Find("TileGround");
 
                 if (childTransform != null)
@@ -165,9 +165,6 @@ public class TileGenerator : MonoBehaviour
                 {
                     if(lines[j].Area==TileArea.MainPath){
                     childRenderer.material.color = Color.green; 
-                    }
-                    else if(lines[j].Area==TileArea.SecondaryPath){
-                    childRenderer.material.color = Color.blue; 
                     }
                     else if(lines[j].Area==TileArea.DeadEnd){
                     childRenderer.material.color = Color.red; 

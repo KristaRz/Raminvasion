@@ -1,3 +1,7 @@
+// Created by Julia Podlipensky
+//> drops assigned foods from RessourceGenerator 
+//> chest-like function for the game
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +13,7 @@ public class RamenStallInteraction : MonoBehaviour
     [SerializeField] private ParticleSystem PositiveParticle;
     [SerializeField] private ParticleSystem NegativeParticle;
 
-
+    //Adds Foods to Stall-List and changes the position to RamenStall-Position
     public void AddFoodToStall(GameObject item) {
         
         item.transform.position=transform.position;
@@ -17,6 +21,7 @@ public class RamenStallInteraction : MonoBehaviour
         
     }
 
+    //Plays ParticleEffect depending on Stall-List and activates Lerp-Animation
     private void OnTriggerEnter(Collider other) {
        
         if(other.CompareTag("Player")){
@@ -37,6 +42,7 @@ public class RamenStallInteraction : MonoBehaviour
         }
     }
 
+    //Activate Lerp-Animation of foods from SpeedPickUp
     IEnumerator ActivateFoods(Collider other){
         foreach (var item in foods)
                 {
