@@ -122,7 +122,7 @@ public class GameHandler : MonoBehaviour
 
 
 
-    #region Difficulty
+    #region Difficulty (Julia)
 
     public DifficultyMode difficultyMode;
     public event Action<DifficultyMode> OnDifficultySwitched = delegate { };
@@ -131,12 +131,14 @@ public class GameHandler : MonoBehaviour
 
     [SerializeField] private const float difficultyStep=10f;
 
+    //Distance between Player and their Ramen
     private float CheckDistance(GameObject playerObj, GameObject ramenObj){
         float currentDistance = Vector3.Distance(playerObj.transform.position, ramenObj.transform.position);
 
         return currentDistance;
     }
 
+    //Updates GameDifficulty with changing distance of RamenToPlayer
     IEnumerator CheckLevelDifficulty(GameObject playerObj, GameObject ramenObj){
         while(true){
             
@@ -155,7 +157,7 @@ public class GameHandler : MonoBehaviour
         
     }
     
-    //lets start simple here
+    //Returns GameDifficulty Mode based on Distance-Steps
     public DifficultyMode GetDifficulty(float distancePlayerRamen){
             switch(distancePlayerRamen){
                 case >=0 and < difficultyStep :

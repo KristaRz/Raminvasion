@@ -11,20 +11,16 @@ using UnityEngine;
 
 public class RessourceDistribution : MonoBehaviour
 {
-
+    [Header("GameObjects and Prefabs")] 
     [SerializeField] private GameObject tileGround;
-
     [SerializeField] private GameObject ramenShop=null;
-
     [SerializeField] private List<GameObject> foodPrefabs=new();
     [SerializeField] private List<GameObject> obstaclePrefabs=new();
 
 
-
+    [Header("Tile Stats")] 
     [SerializeField] private float TileWidth;
-
     [SerializeField] private List<Vector3> possiblePositions;
-
     private bool firstCheckPos=false;
 
 
@@ -37,15 +33,13 @@ public class RessourceDistribution : MonoBehaviour
     
 
 
-
+    //returns a random possible placement position on this Tile
     private Vector3 GetPossiblePlacementPoint(TileType tileType){
-
+        //check if tile positions are already established
         if(!firstCheckPos){
             possiblePositions=new();
         
             //always possible inner Positions
-
-            //first on x-z plane
            possiblePositions=new List<Vector3>()
             {
                 new Vector3(0,foodHeight,0),
@@ -82,7 +76,7 @@ public class RessourceDistribution : MonoBehaviour
         //prevent double placement
         possiblePositions.Remove(randomPosition);
         
-        //height depending on ressource
+        //height for food
     	Vector3 addedHeightPos=new Vector3(randomPosition.x,foodHeight,randomPosition.z);
         
         //adjust to TileWidth
@@ -92,6 +86,7 @@ public class RessourceDistribution : MonoBehaviour
         return scaledAdjustedPosition;
     }
 
+    //Returns random Item from a List
     private T GetRandomItem<T>(List<T> list){
         if(list!=null && list.Count!=0){
             int randomIndex = Random.Range(0, list.Count);
@@ -101,40 +96,48 @@ public class RessourceDistribution : MonoBehaviour
         
     }
 
-    public void PlaceFood(int currentRowIndex) {
-        TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
+    #region Placers
+    //Places Ressource on picked PlacementPosition on Tile. Called from RessourceGenerator.cs
 
-        Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
-        GameObject foodPrefab=GetRandomItem(foodPrefabs);
+        //For Food. Picks Random Food and Instantiates on picked position. If its a dead End Tile, further work is done on the RamenStall
+        public void PlaceFood(int currentRowIndex) {
+            TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
-        GameObject food= Instantiate(foodPrefab, randomPosition, Quaternion.identity,this.gameObject.transform);
+            Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
 
-        if(tileType==TileType.DeadEnd){
-            GameObject ramenStall=transform.Find("ramen_stall").gameObject;
-            ramenStall.GetComponent<RamenStallInteraction>().AddFoodToStall(food);
-        }
-    }
+            //could add food after certain currentRowIndex
 
-    public void PlaceObstacles(int currentRowIndex){
-        TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
+            GameObject foodPrefab=GetRandomItem(foodPrefabs);
 
-        Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
+            GameObject food= Instantiate(foodPrefab, randomPosition, Quaternion.identity,this.gameObject.transform);
 
-        // Debug.Log(currentRowIndex);
-        
-        GameObject obstaclePrefab;
-        if(currentRowIndex<=20){
-            //[0] is the box
-            obstaclePrefab=obstaclePrefabs[0];
-        }
-        else{
-            obstaclePrefab=GetRandomItem(obstaclePrefabs);
+            if(tileType==TileType.DeadEnd){
+                GameObject ramenStall=transform.Find("ramen_stall").gameObject;
+                //for work on RamenStall
+                ramenStall.GetComponent<RamenStallInteraction>().AddFoodToStall(food);
+            }
         }
 
-        float randomAngle = Random.Range(0f, 360f);
-        Quaternion randomRotation=Quaternion.Euler(0,randomAngle,0);
+        //For Obstacles. Picks Random Obstacle and Instantiates on picked position. With increasing currentRowIndex harder obstacle is added to random pick.
+        public void PlaceObstacles(int currentRowIndex){
+            TileType tileType=gameObject.GetComponent<TileInfo>().tileType;
 
-        Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), randomRotation,this.gameObject.transform);
-    }
+            Vector3 randomPosition=GetPossiblePlacementPoint(tileType);
+            
+            GameObject obstaclePrefab;
+            if(currentRowIndex<=20){
+                //[0] is the box
+                obstaclePrefab=obstaclePrefabs[0];
+            }
+            else{
+                obstaclePrefab=GetRandomItem(obstaclePrefabs);
+            }
 
+            //random rotation of obstacles for some variety
+            float randomAngle = Random.Range(0f, 360f);
+            Quaternion randomRotation=Quaternion.Euler(0,randomAngle,0);
+
+            Instantiate(obstaclePrefab, new Vector3(randomPosition.x, tileGround.transform.position.y, randomPosition.z), randomRotation,this.gameObject.transform);
+        }
+    #endregion
 }

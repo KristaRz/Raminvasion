@@ -1,3 +1,6 @@
+//Created by Krista Plagemann
+//> changes Ramen-Speed of Player or other Player
+//> visual Effect for Collection (Julia)
 
 using UnityEngine;
 
@@ -25,8 +28,10 @@ public class SpeedPickup : MonoBehaviour
 
             player=other.gameObject;
 
+            //activate Lerp-Animation
             triggerd=true;
             
+            //activate Collect-Animation and then destroy Food
             Animator foodAnim=gameObject.GetComponent<Animator>();
             foodAnim.Play("Collected");
         }
@@ -37,6 +42,7 @@ public class SpeedPickup : MonoBehaviour
         Destroy(gameObject);
     }
 
+    //Lerp Food to Player
     private void Update() {
         if(triggerd && gameObject!=null){
             //not very performant to do this every update, but idk how else :(

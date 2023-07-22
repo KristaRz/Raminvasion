@@ -1,3 +1,7 @@
+// Created by Julia Podlipensky
+//> handles Obstacle Effects on Player Speed
+//> playes Particle Effects
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +17,7 @@ public class ObstacleEffect : MonoBehaviour
 
     [SerializeField] private ParticleSystem particleEffect;
 
+    //Play Particle Effect on Collision-Point and execute PlayerSpeed-Effect
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -29,6 +34,7 @@ public class ObstacleEffect : MonoBehaviour
 
     }
 
+    //Slow down or stop Player from moving for designated time
     private IEnumerator ChangeMoveSpeed(ThirdPersonController playerController)
     {   
         if (gameObject.CompareTag("BoxObstacle"))
