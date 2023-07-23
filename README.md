@@ -12,3 +12,11 @@ References for Assets in Raminvasion:
 - Japaniese lamp by 3DRivers by 3DRivers, https://www.turbosquid.com/3d-models/japanese-lamp-japan-max-free/450927
 - Splats spilled liquid Free low-poly 3D model by smcafee-3d, https://www.cgtrader.com/free-3d-models/various/various-models/splats
 - Building PNG image with transparent background | building_PNG33.png by pngimg.com, https://pngimg.com/image/24486
+- LeanTween by Dented Pixel, https://assetstore.unity.com/packages/tools/animation/leantween-3595
+- Starter Assets by Unity Technologies, https://assetstore.unity.com/packages/essentials/starter-assets-third-person-character-controller-urp-196526
+
+Unity Packages used:
+
+- AINavigation (com.unity.ai.navigation)
+- Cinemachine
+- TextMeshPro
