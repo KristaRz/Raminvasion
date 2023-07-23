@@ -1,6 +1,7 @@
 // Created by Krista Plagemann //
-// Handles selecting a room in the lobby and joining as a certain player //
-
+// Handles selecting a room in the lobby and joining as a certain player. //
+// Communicates with the other player on SetReady pressing.
+// This needs a lot more safeguarding functions (especially that you can't start if there's only one person in the room oops :D).
 
 using Photon.Pun;
 using Photon.Realtime;

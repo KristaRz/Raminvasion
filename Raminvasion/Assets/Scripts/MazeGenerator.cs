@@ -1,24 +1,8 @@
-/*Kaan Ko�ak              Procedural Level Generation Elective                 May 2023/
-/*
- * MazeGenerator.cs
- * 
- * This script generates a maze using a randomized algorithm. It creates a grid of tiles
- * and connects them to form a maze structure.
- * 
- * Functionality:
- * - Regenerates the maze upon key press or at the start of the game.
- * - Uses a coroutine to generate the maze step by step with a visual delay.
- * - Allows customization of grid size, tile parameters, and delay between steps.
- * - Stores the generated maze in a 2D array.
- * 
- * Usage:
- * - Attach this script to a GameObject in the scene.
- * - Assign the required variables such as tilePrefab, tileSize, gridSizeX, gridSizeZ, etc.
- * - Press the designated key (default: R) to regenerate the maze.
- */
+// Created by Kaan Ko�ak
+// Contains snippets to connect to TileGenerator and old maze gen code by Krista Plagemann
 
-//Note vector2int.up represents the front direction.
-
+// Creates a procedural maze with given variables and stores it in a list of TileInformation.
+// Called to action by TileGenerator via GenerateMazeBlueprint and hands values back to TileGenerator again.
 
 
 
@@ -60,6 +44,29 @@ public class MazeGenerator : MonoBehaviour
     private bool _firstMazeGenerated = false;
 
     private int _crossWaysAmount = 0;
+
+    /*Kaan Ko�ak              Procedural Level Generation Elective                 May 2023/
+/*
+ * MazeGenerator.cs
+ * 
+ * This script generates a maze using a randomized algorithm. It creates a grid of tiles
+ * and connects them to form a maze structure.
+ * 
+ * Functionality:
+ * - Regenerates the maze upon key press or at the start of the game.
+ * - Uses a coroutine to generate the maze step by step with a visual delay.
+ * - Allows customization of grid size, tile parameters, and delay between steps.
+ * - Stores the generated maze in a 2D array.
+ * 
+ * Usage:
+ * - Attach this script to a GameObject in the scene.
+ * - Assign the required variables such as tilePrefab, tileSize, gridSizeX, gridSizeZ, etc.
+ * - Press the designated key (default: R) to regenerate the maze.
+ */
+
+    //Note vector2int.up represents the front direction.
+
+
 
     public void GenerateMazeBlueprint(int columns, int rows, int tileSize, int minAdjacentTiles, int maxAdjacentTiles, int numDeadEnds, int numExpansionTiles)
     {       
@@ -151,8 +158,6 @@ public class MazeGenerator : MonoBehaviour
     private void ExpandMaze()
     {
         int deadEndCount = 0;
-        int tryCount = 0;
-        int failCount = 0;
 
         int excludeRows = Mathf.CeilToInt(gridSizeZ * 0.05f);
         int excludeRange = gridSizeZ - excludeRows * 2;
@@ -206,8 +211,6 @@ public class MazeGenerator : MonoBehaviour
         // Declare the directions of the maze tiles and receive back a list of TileInformation to hand to the TileGenerator
         continuousMazeDirections = MazeTileDeclaration.PositionTiles(mazeGrid, gridSizeX, gridSizeZ, _tileSize);
         OnMazeGenerated(continuousMazeDirections);
-
-
     }
 
     private void AddCrossWays( int[,] firstPath)
@@ -782,6 +785,11 @@ public class MazeGenerator : MonoBehaviour
 
 }
 
+// Created by Krista Plagemann
+
+/// <summary>
+/// Stores information about a tile like position and type.
+/// </summary>
 [Serializable]
 public class TileInformation
 {

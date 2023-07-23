@@ -8,8 +8,6 @@
 
 using Photon.Pun;
 using System;
-using UnityEngine;
-using System.Collections.Generic;
 
 public enum CollectableType { Onion, Carrot }
 

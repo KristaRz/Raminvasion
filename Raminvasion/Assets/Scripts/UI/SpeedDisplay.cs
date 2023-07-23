@@ -1,5 +1,6 @@
 // Created 02.07.2023 by Krista Plagemann //
-// Handles the UI according to player like spawning the right prefab and calculating the color values from received speed.//
+// Handles the UI according to player, like spawning the right prefab, calculating distance and color values from distance/speed.//
+// Also shows the distance and color of the other player for this one.
 
 
 using System.Threading.Tasks;

@@ -1,3 +1,6 @@
+// Created by Krista Plagemann //
+// Creates a new room and joins or joins an existing room.
+
 
 using TMPro;
 using UnityEngine;

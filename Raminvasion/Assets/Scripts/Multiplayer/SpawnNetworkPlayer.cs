@@ -1,5 +1,5 @@
-// Created on base of youtube tutorial by Valem //
-// Instantiates a prefab as the player avatar when we join a room and destroys it again when we leave a room. //
+// Created on base of youtube tutorial by Valem, completely modified by Krista Plagemann lol //
+// Instantiates a prefab of the player when we join a room. //
 
 
 using Photon.Pun;
@@ -19,7 +19,7 @@ public class SpawnNetworkPlayer : MonoBehaviourPunCallbacks
 
     public void OnGameStarted()
     {
-        // When we join a room, we spawn an Avatar for ourselves(the NetworkPlayer). This will be visible to others then since we instantiate it in the network.
+        // When we join a room, we spawn our player for ourselves according to which player we are
 
         if (GameHandler.Instance.currentPlayer == PlayerTag.Player1)
         {

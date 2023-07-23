@@ -1,3 +1,7 @@
+// Created by Krista Plagemann //
+// > Difficulty by Julia
+
+// Handles game states and collects the ramen speed for this player and the other player in the network.
 
 using System;
 using System.Collections;
@@ -72,6 +76,8 @@ public class GameHandler : MonoBehaviour
 
     #region Speed
 
+    // Misleading name, the PlayerSpeed is actually the RamenSpeed, should rename in the future :D
+
     public float Player1Speed { get; private set; } = 0f;
     public float Player2Speed { get; private set; } = 0f;
 
@@ -119,7 +125,6 @@ public class GameHandler : MonoBehaviour
     }
 
     #endregion
-
 
 
     #region Difficulty (Julia)
@@ -172,8 +177,4 @@ public class GameHandler : MonoBehaviour
     }
 
     #endregion
-
-
-    
-
 }

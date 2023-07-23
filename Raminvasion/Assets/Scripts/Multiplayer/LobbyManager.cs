@@ -1,3 +1,8 @@
+// Created by Krista Plagemann //
+// Handles the lobby canvases as well as Network room functions. //
+// More precisely: Creating a room, joining it  and starting the game. //
+// Also updates a list of rooms available (which is very dirty and quick but works for now lol. In future I should keep the rooms still available and not refresh by decimating all xD)
+
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
