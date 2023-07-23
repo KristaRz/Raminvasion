@@ -1,0 +1,12 @@
+References for Assets in Raminvasion:
+
+- House of Color C Green by Reberu Game Studio, https://assetstore.unity.com/packages/3d/props/exterior/house-of-color-c-green-152209
+- Crate and Barrels by Kobra Game Studios, https://assetstore.unity.com/packages/3d/props/industrial/crate-and-barrels-73101
+- Food Pack Mixed by Brain Fail Productions, https://assetstore.unity.com/packages/3d/props/food/food-pack-mixed-154349
+- Hit Impact Effects FREE by Travis Game Assets, https://assetstore.unity.com/packages/vfx/particles/hit-impact-effects-free-218385
+- Fantasy Skybox FREE by Render Knight, https://assetstore.unity.com/packages/2d/textures-materials/sky/fantasy-skybox-free-18353
+- 3D Japanese Ramen Stall by kaharu292, https://www.turbosquid.com/3d-models/3d-japanese-ramen-stall-1994428
+- FSM.obj by Will_LaPuerta, https://www.turbosquid.com/3d-models/flying-spaghetti-monster-3d-model/408717
+- Japaniese lamp by 3DRivers by 3DRivers, https://www.turbosquid.com/3d-models/japanese-lamp-japan-max-free/450927
+- Splats spilled liquid Free low-poly 3D model by smcafee-3d, https://www.cgtrader.com/free-3d-models/various/various-models/splats
+- Building PNG image with transparent background | building_PNG33.png by pngimg.com, https://pngimg.com/image/24486
