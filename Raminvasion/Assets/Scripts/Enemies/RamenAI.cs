@@ -14,7 +14,7 @@ public class RamenAI : MonoBehaviourPunCallbacks
     [SerializeField] private Transform _Player;
     [SerializeField] private float _StartingDelay;
     [SerializeField, Tooltip("Rate at which the ramen gets faster.")] private float SpeedupRate = 1;
-    [SerializeField] private float RamenFollowSpeed = 8;
+    [SerializeField] private float _RamenFollowSpeed = 8;
 
     [SerializeField] private float _PlayerUpdateRate = 2f;
     private float _speedCollected = 0;
@@ -43,8 +43,8 @@ public class RamenAI : MonoBehaviourPunCallbacks
         _Player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
         SpeedupRate = SpeedupRate / 2;
-        _agent.speed = RamenFollowSpeed;
-        GameHandler.Instance.UpdateSpeed(_RamenEnemy, RamenFollowSpeed);
+        _agent.speed = _RamenFollowSpeed;
+        GameHandler.Instance.UpdateSpeed(_RamenEnemy, _RamenFollowSpeed);
 
         if (_RamenEnemy == PlayerTag.Player1)
             GameHandler.Instance.OnPlayer1Speed += ChangeSpeed;

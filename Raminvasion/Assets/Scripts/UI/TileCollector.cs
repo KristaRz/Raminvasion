@@ -16,6 +16,8 @@ public class TileCollector : MonoBehaviour
     {
         await CollectTiles();
     }
+
+    // Shoot a ray forward always and checks if we hit a GazeCollider object. If yes tries to give it to MinimapGenerator (if unsuccessful try again)
     private async Task CollectTiles()
     {
         while (_updateMap)

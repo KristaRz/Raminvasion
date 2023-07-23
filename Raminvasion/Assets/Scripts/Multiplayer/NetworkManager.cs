@@ -1,11 +1,8 @@
-// Created on base of youtube tutorial by Valem //
-// Initializes the connection to the server and gives status updates via Debug.Log. Also creates a room "Room 1" once connected or joins said room if exciting already. //
-
+// Created on base of youtube tutorial by Valem, modified by Krista Plagemann //
+// Initializes the connection to the server and gives status updates via Debug.Log.
 
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
-using System.Collections.Generic;
 using TMPro;
 
 public class NetworkManager : MonoBehaviourPunCallbacks

@@ -1,3 +1,7 @@
+// Created by Kaan Kocak
+// Edited by Krista Plagemann to store information as TileInformation instead of instantiating.
+// Contains old code by Julia and Krista to declare tile directions for other versions.
+
 // Defines the tile directions 
 
 using System.Collections.Generic;
