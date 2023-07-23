@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
@@ -205,8 +206,13 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2029913703}
     m_Modifications:
+    - target: {fileID: 2951495358287800483, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 239.39003
+      objectReference: {fileID: 0}
     - target: {fileID: 2951495358309444346, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
       propertyPath: m_Name
       value: -MenuCanvas-
@@ -303,6 +309,14 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2951495358852433104, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1103
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495358852433104, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -686
+      objectReference: {fileID: 0}
     - target: {fileID: 2951495358852433105, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -311,11 +325,42 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: StartDebugGame
       objectReference: {fileID: 0}
+    - target: {fileID: 2951495359125672177, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 90.09003
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495359454515587, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495359483453579, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 390
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495359531309728, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495359613095808, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495360137282322, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2951495360137282322, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2951495360282864258, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2029913702}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3a3a9709d533be4887e73bc0d0cf213, type: 3}
 --- !u!1 &369462501 stripped
 GameObject:
@@ -401,9 +446,20 @@ MonoBehaviour:
   m_Dithering: 0
   m_ClearDepth: 1
   m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!81 &451775752
 AudioListener:
   m_ObjectHideFlags: 0
@@ -426,9 +482,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -475,8 +539,13 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2029913703}
     m_Modifications:
+    - target: {fileID: 6856247609013498348, guid: 2e9a6a0e68112084aa3d192851f3d5b6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6856247609380251937, guid: 2e9a6a0e68112084aa3d192851f3d5b6, type: 3}
       propertyPath: m_Name
       value: -Overlay-
@@ -566,6 +635,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e9a6a0e68112084aa3d192851f3d5b6, type: 3}
 --- !u!224 &816981490 stripped
 RectTransform:
@@ -846,14 +918,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 1
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 1
 --- !u!108 &1382790279
 Light:
   m_ObjectHideFlags: 0
@@ -936,6 +1011,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2029913703}
     m_Modifications:
     - target: {fileID: 4313416678679908937, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
@@ -1026,7 +1102,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4313416679840107743, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313416679840107743, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313416679840107743, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4313416679840107743, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e0fa7147a3258246b16e7c3c2d11f94, type: 3}
 --- !u!224 &1549643268 stripped
 RectTransform:
@@ -1230,7 +1325,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 4
   m_TargetDisplay: 0
@@ -1349,11 +1446,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toPopulateTiles: []
-  difficultyMode: 1
   toPopulateTilesAmount: 5
   maxObstacleOnTile: 3
   maxFoodOnTile: 2
   currentRowSpawnedIndex: 0
+  difficultyMode: 1
 --- !u!4 &2042204746
 Transform:
   m_ObjectHideFlags: 0
