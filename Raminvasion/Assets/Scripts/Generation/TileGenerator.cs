@@ -35,6 +35,7 @@ public class TileGenerator : MonoBehaviour
     [SerializeField] private Transform _VacuumRamenToTrack;
     [SerializeField] private NavMeshSurface _navMeshSurface;
     [SerializeField] private int _TilesVisibleForward => _LaneRows;
+    [SerializeField] private int _TilesVisibleBackward = 5;
 
     [SerializeField] private int _LaneColumns = 20;
     [SerializeField] private int _LaneRows = 20;
@@ -134,7 +135,7 @@ public class TileGenerator : MonoBehaviour
             if (_PlayerToTrack.position.z >= (_rowsGeneratedIndex - _TilesVisibleForward) * _TileWidth)
                 GetNewLine();
 
-            if (_VacuumRamenToTrack.position.z >= (_lastRowActive + 2) * _TileWidth)
+            if (_VacuumRamenToTrack.position.z >= (_lastRowActive + _TilesVisibleBackward) * _TileWidth)
                 RemoveSingleLine();
         }
     }
@@ -152,8 +153,8 @@ public class TileGenerator : MonoBehaviour
             newTile.transform.parent = _mazeParent.transform;
             newTile.GetComponent<TileInfo>().DeclareTileDirection(lines[j].Direction);
 
+            //just for visual debugging
             if(areaVisualDebug){
-                //just for visual debugging
                 Transform childTransform = newTile.transform.Find("TileGround");
 
                 if (childTransform != null)
@@ -165,9 +166,6 @@ public class TileGenerator : MonoBehaviour
                     if(lines[j].Area==TileArea.MainPath){
                     childRenderer.material.color = Color.green; 
                     }
-                    else if(lines[j].Area==TileArea.SecondaryPath){
-                    childRenderer.material.color = Color.blue; 
-                    }
                     else if(lines[j].Area==TileArea.DeadEnd){
                     childRenderer.material.color = Color.red; 
                     }
@@ -178,10 +176,10 @@ public class TileGenerator : MonoBehaviour
 
             lines[j].TileObject = newTile;
             _activeSortedTiles.Add(lines[j]);
-            RessourceGenerator.Instance.HandleTileQueue(lines[j]);
+            RessourceGenerator.Instance.HandleTileQueue(lines[j], _rowsGeneratedIndex);//activate RessourceGenerator 
         }
 
-        OnNewRowSpawned?.Invoke(_rowsGeneratedIndex);
+        OnNewRowSpawned?.Invoke(_rowsGeneratedIndex); 
         OnFirstLaneGenerated?.Invoke();  // this is empty after the first one so maybe remove later with bool or smth
         _navMeshSurface.BuildNavMesh(); // every time we make a row, we build the navmesh new with all active ones
     }

@@ -1,5 +1,5 @@
 // Created 02.07.2023 by Krista Plagemann //
-// Contains some references and scales images when you collect collectables.//
+// Contains some references and scales images of a collected resources up and down when you collect it.//
 
 using TMPro;
 using UnityEngine;
@@ -25,6 +25,10 @@ public class PlayerUI : MonoBehaviour
         CollectablesHandler.Instance.OnCollected += CollectedType;
     }
 
+    /// <summary>
+    /// Marks a resource as collected which makes it pop up in the player UI.
+    /// </summary>
+    /// <param name="type">The type of resource collected.</param>
     public void CollectedType(CollectableType type)
     {
         if(type == CollectableType.Onion)

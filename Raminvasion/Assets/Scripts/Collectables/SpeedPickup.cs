@@ -1,3 +1,6 @@
+//Created by Krista Plagemann
+//> changes Ramen-Speed of Player or other Player
+//> visual Effect for Collection (Julia)
 
 using UnityEngine;
 
@@ -8,9 +11,10 @@ public class SpeedPickup : MonoBehaviour
     [SerializeField] private float _SpeedAmount = 3;
 
     [SerializeField] public bool triggerd=false;
-    [SerializeField] private float lerpSpeed=30;
+    private float lerpSpeed=15;
+    [SerializeField] private CollectableType _CollectableType;
 
-    private GameObject player;
+    public GameObject player;
 
     private Vector3 initalPosition;
 
@@ -19,26 +23,35 @@ public class SpeedPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount);
-            // Destroy(gameObject);
+            CollectablesHandler.Instance.ChangeSpeed(_SpeedAmount, _CollectableType);
+            
+
             player=other.gameObject;
 
-            initalPosition=gameObject.transform.position;
-
+            //activate Lerp-Animation
             triggerd=true;
             
-            Animator onionAnim=gameObject.GetComponent<Animator>();
-            onionAnim.Play("Collected");
+            //activate Collect-Animation and then destroy Food
+            Animator foodAnim=gameObject.GetComponent<Animator>();
+            foodAnim.Play("Collected");
         }
     }
+
 
     public void DestroyObj(){
         Destroy(gameObject);
     }
 
+    //Lerp Food to Player
     private void Update() {
         if(triggerd && gameObject!=null){
-            transform.position = Vector3.Lerp(initalPosition, player.transform.position, Time.deltaTime * lerpSpeed);
+            //not very performant to do this every update, but idk how else :(
+            initalPosition=gameObject.transform.position;
+            float playerHeight=player.GetComponent<CharacterController>().height;
+            Vector3 playerHeadPos=player.transform.position+new Vector3(0,playerHeight,0);
+            
+
+            transform.position = Vector3.Lerp(initalPosition, playerHeadPos , Time.deltaTime * lerpSpeed);
         }
     }
 

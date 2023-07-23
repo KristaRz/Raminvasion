@@ -1,7 +1,11 @@
+// Created by Kaan Kocak
+// Edited by Krista Plagemann to store information as TileInformation instead of instantiating.
+// Contains old code by Julia and Krista to declare tile directions for other versions.
+
 // Defines the tile directions 
 
 using System.Collections.Generic;
-
+using UnityEngine;
 
 public static class MazeTileDeclaration
 {
@@ -21,7 +25,7 @@ public static class MazeTileDeclaration
                     bool hasLeft = column > 0 && mazeGrid[column - 1, row] > 0;
                     bool hasRight = column < gridSizeX - 1 && mazeGrid[column + 1, row] > 0;
 
-                    TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical);  // create a tile 
+                    TileInformation newTile = new TileInformation(column, row , 0, TileDirection.Vertical, TileArea.MainPath);  // create a tile 
 
                     /*
                     Vector3 tilePosition = new Vector3(column * tileSize, 0f, row * tileSize);
@@ -113,10 +117,11 @@ public static class MazeTileDeclaration
     }
 
 
-    #region Jules declaration
+    #region Julias declaration (on Kaans 1s maze)
 
     /*
 
+    //Backward change of TileDirection
     public static void ChangePreviousTile(GameObject tile, Vector2Int direction, int adjacentTilesIndex){
 
         //Only for Curves with previous direction.y>0, Changing in next Maze-Generation step bcs both curve direction are needed
@@ -133,6 +138,7 @@ public static class MazeTileDeclaration
         }
     }
 
+    //Direction Declaration of freshly instantiated Tile
     public static void DeclareAdjacentTiles(GameObject tile, Vector2Int direction, int adjacentTilesIndex, int numAdjacentTiles){
 
         //Curves based on maze-pattern to go Vector2Int.up again after last horizontal adjacent Tile
@@ -161,6 +167,7 @@ public static class MazeTileDeclaration
             
         } 
     }
+
     */
 
     #endregion

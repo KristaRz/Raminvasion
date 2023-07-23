@@ -48,7 +48,7 @@ MonoBehaviour:
   _VacuumRamenToTrack: {fileID: 0}
   _navMeshSurface: {fileID: 0}
   _LaneColumns: 20
-  _LaneRows: 25
+  _LaneRows: 10
   _TileWidth: 20
   _MinAdjacentTiles: 3
   _MaxAdjacentTiles: 5
